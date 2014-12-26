@@ -16,14 +16,17 @@
 @end
 
 typedef enum : NSUInteger {
-    TAG_TYPE_READ_MORE_VIEW,
-    TAG_TYPE_IMAGE_VIEW
+    TAG_TYPE_IMAGE_VIEW = 1,
+    TAG_TYPE_READ_MORE_VIEW = 2
+
 } COUPON_VIEW_TAG_TYPES;
 
 @implementation MainTableViewController{
     CouponStore * _couponStore;
     
-    NSMutableArray * _readMoreIndeces;
+    BOOL isReadMoreSelected;
+    int readMoreIndex;
+    Coupon * _currSelectedCoupon;
     
     
 }
@@ -37,7 +40,8 @@ typedef enum : NSUInteger {
             Coupon * createdCoupon = [_couponStore createCoupon];
             NSLog(@"%@", createdCoupon);
         }
-        _readMoreIndeces = [NSMutableArray array];
+        readMoreIndex = -1;
+        isReadMoreSelected = NO;
     }
     return self;
 }
@@ -59,29 +63,20 @@ typedef enum : NSUInteger {
     // Dispose of any resources that can be recreated.
 }
 
--(int) getReadMoreCount{
-    return [_readMoreIndeces count];
-}
 
 -(int) correctCouponIndexForIndexPath:(NSIndexPath *) indexPath{
-    int currAns = indexPath.row;
-    for (int i = 0; i < _readMoreIndeces.count; i++){
-        NSNumber * curr = _readMoreIndeces[i];
-        if(curr.intValue <= indexPath.row){
-            currAns--;
-        }
-        else{
-            break;
-        }
-    }
-    return currAns;
+    if (indexPath.row > readMoreIndex && isReadMoreSelected)
+        return indexPath.row - 1;
+    else return indexPath.row;
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return [[_couponStore allCoupons] count] + [_readMoreIndeces count];
+    if (isReadMoreSelected)
+        return [[_couponStore allCoupons] count] + 1;
+    else return [[_couponStore allCoupons] count];
 }
 
 -(float) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -89,88 +84,119 @@ typedef enum : NSUInteger {
     //if it is, return the standard height of a coupon read more box
     //else return the height of the coupon image view frame
     
-    int correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
-    Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
-    
-    if ([self isReadMoreIndex:indexPath]){
+    if (indexPath.row == readMoreIndex && isReadMoreSelected){
+        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
         return coupon.couponReadMoreView.frame.size.height;
     }
     else{
-
+        int correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
+        Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
         return coupon.couponImageView.frame.size.height;
     }
 }
 
--(BOOL) isReadMoreIndex:(NSIndexPath *)indexPath{
-    NSLog(@"readmoreindeces count: %d", [_readMoreIndeces count]);
-    for (int i = 0; i < [_readMoreIndeces count]; i++){
-        NSNumber * curr = (NSNumber *)_readMoreIndeces[i];
-        NSLog(@"curr.intvalue : %d", curr.intValue);
-        NSLog(@"indexpath.row : %d", indexPath.row);
-        if (curr.intValue == indexPath.row){
-            NSLog(@"returning yes");
-            return YES;
-        }
-    }
-    return NO;
-}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    //get cell to reuse
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Coupon" forIndexPath:indexPath];
 
-    NSLog(@"%@", [cell viewWithTag:TAG_TYPE_READ_MORE_VIEW]);
-    
-    int correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
 
-    if ([self isReadMoreIndex:indexPath]){
+    /* if the path of the cell that is to be displayed is a readmore view */
+    if (indexPath.row == readMoreIndex && isReadMoreSelected){
+        /* get correct coupon */
         Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
+        /* clean cell before using */
+        [[cell.contentView viewWithTag:TAG_TYPE_IMAGE_VIEW]removeFromSuperview];
+        /* add readmore view */
         [cell.contentView addSubview:coupon.couponReadMoreView];
         coupon.couponReadMoreView.tag = TAG_TYPE_READ_MORE_VIEW;
-        
-        NSLog(@"IS ROW INDEX");
-    }
+        }
+    
+    /* else you're displaying a coupon */
     else{
+        /* get correct index of the coupon in the couponstore array */
+        int correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
-        [cell.contentView addSubview:coupon.couponImageView];
+        /* clean cell before using */
+        [[cell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
+        /* add coupon imageview */
         coupon.couponImageView.tag = TAG_TYPE_IMAGE_VIEW;
-        //****** add uitableviewcell extension to enable a coupon property
+        [cell.contentView addSubview:coupon.couponImageView];
+        //****** add uitableviewcell extension to enable a coupon property (?)
     }
     return cell;
 }
 
+
+- (void)listSubviewsOfView:(UIView *)view {
+    
+    // Get the subviews of the view
+    NSArray *subviews = [view subviews];
+    
+    // Return if there are no subviews
+    if ([subviews count] == 0) return; // COUNT CHECK LINE
+    
+    for (UIView *subview in subviews) {
+        
+        // Do what you want to do with the subview
+        NSLog(@"%@", subview);
+        
+        // List the subviews of subview
+        [self listSubviewsOfView:subview];
+    }
+    NSLog(@"-------------");
+}
+
+-(void) removeReadMoreView{
+    //first set isreadmoreselected to false so that when changing rows the table cell count is adjusted
+    isReadMoreSelected = NO;
+
+    NSIndexPath * path = [NSIndexPath indexPathForRow:readMoreIndex inSection:0];
+    UITableViewCell * readMoreCell = [self.tableView cellForRowAtIndexPath:path];
+    [[readMoreCell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
+    [self.tableView deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
+    _currSelectedCoupon.selected = NO;
+    _currSelectedCoupon = nil;
+    readMoreIndex = -1;
+    
+}
+
+-(void) insertReadMoreViewForCoupon:(Coupon *) coupon atIndexPath:(NSIndexPath *) indexPath{
+    NSLog(@"inserting readmoreview for coupon at index path: %d", indexPath.row);
+    _currSelectedCoupon = coupon;
+    _currSelectedCoupon.selected = YES;
+    
+    readMoreIndex = indexPath.row + 1;
+    isReadMoreSelected = YES;
+    NSIndexPath * path = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:0];
+    [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
+    
+}
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (! [self isReadMoreIndex:indexPath]){
+    NSLog(@"touched coupon at index path: %d", indexPath.row);
+    if (indexPath.row != readMoreIndex || ! isReadMoreSelected){
         int correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
         
-        //if coupon is already selected, remove it's read more box and update the readmoreindeces array
+        /* if coupon is already selected, remove it's read more box and update the readmoreindeces array */
         if (coupon.selected){
-            coupon.selected = NO;
-            for (int i = 0; i < [_readMoreIndeces count]; i++){
-                NSNumber * readMoreIndex = _readMoreIndeces[i];
-                if(readMoreIndex.intValue == indexPath.row + 1){
-                    [_readMoreIndeces removeObjectAtIndex:i];
-                    break;
-                }
-            }
-
-            NSIndexPath * path = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:0];
-            UITableViewCell * readMoreCell = [tableView cellForRowAtIndexPath:path];
-            [[readMoreCell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
-            [tableView deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
-
+            NSLog(@"coupon deselected");
+            [self removeReadMoreView];
         }
         
         //if the coupon is not already selected, add it's read more box in the next cell and update the readmoreindeces array
         else{
-            coupon.selected = YES;
-            NSNumber * readMoreIndex = [NSNumber numberWithInt:indexPath.row + 1];
-            [_readMoreIndeces addObject:readMoreIndex];
-            NSIndexPath * path = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:0];
-            [tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
             
-    //        [tableView insertSubview:coupon.couponReadMoreView atIndex:indexPath];
-    //        [tableView reloadRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationBottom];
+            if (isReadMoreSelected){
+                if (readMoreIndex < indexPath.row)
+                    indexPath = [NSIndexPath indexPathForRow:indexPath.row-1 inSection:indexPath.section];
+                [self removeReadMoreView];
+
+            }
+            
+            NSLog(@"coupon selected");
+            [self insertReadMoreViewForCoupon:coupon atIndexPath:indexPath];
         }
     }
 

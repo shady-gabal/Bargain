@@ -10,5 +10,4 @@
 
 @interface MainTableViewController : UITableViewController
 
-@property (nonatomic, assign) int readMoreCount;
 @end
