@@ -15,5 +15,6 @@
 
 +(instancetype) sharedInstance;
 -(Coupon *) createCoupon;
+-(void) getCouponsFromServer;
 
 @end

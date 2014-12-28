@@ -11,6 +11,10 @@
 		9753869E1A476D8F0024FC33 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9753869B1A476D8F0024FC33 /* 1.jpg */; };
 		9753869F1A476D8F0024FC33 /* 2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9753869C1A476D8F0024FC33 /* 2.jpg */; };
 		975386A01A476D8F0024FC33 /* 3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9753869D1A476D8F0024FC33 /* 3.jpg */; };
+		975386A41A4DC6F10024FC33 /* coupon2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 975386A11A4DC6F10024FC33 /* coupon2.jpg */; };
+		975386A51A4DC6F10024FC33 /* coupon3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 975386A21A4DC6F10024FC33 /* coupon3.jpg */; };
+		975386AB1A4F7A160024FC33 /* LocationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 975386AA1A4F7A160024FC33 /* LocationHandler.m */; };
+		975386B01A4F91FB0024FC33 /* CouponTemplate1.xib in Resources */ = {isa = PBXBuildFile; fileRef = 975386AF1A4F91FB0024FC33 /* CouponTemplate1.xib */; };
 		97872FBE1A23E07700867DBB /* Coupon.m in Sources */ = {isa = PBXBuildFile; fileRef = 97872FBD1A23E07700867DBB /* Coupon.m */; };
 		97872FC11A23E0CE00867DBB /* CouponStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 97872FC01A23E0CE00867DBB /* CouponStore.m */; };
 		97AE743A1A1BCF9D00FE6FAB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97AE74391A1BCF9D00FE6FAB /* main.m */; };
@@ -36,6 +40,11 @@
 		9753869B1A476D8F0024FC33 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		9753869C1A476D8F0024FC33 /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
 		9753869D1A476D8F0024FC33 /* 3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3.jpg; sourceTree = "<group>"; };
+		975386A11A4DC6F10024FC33 /* coupon2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = coupon2.jpg; sourceTree = "<group>"; };
+		975386A21A4DC6F10024FC33 /* coupon3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = coupon3.jpg; sourceTree = "<group>"; };
+		975386A91A4F7A160024FC33 /* LocationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationHandler.h; sourceTree = "<group>"; };
+		975386AA1A4F7A160024FC33 /* LocationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationHandler.m; sourceTree = "<group>"; };
+		975386AF1A4F91FB0024FC33 /* CouponTemplate1.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CouponTemplate1.xib; sourceTree = "<group>"; };
 		97872FBC1A23E07700867DBB /* Coupon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coupon.h; sourceTree = "<group>"; };
 		97872FBD1A23E07700867DBB /* Coupon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Coupon.m; sourceTree = "<group>"; };
 		97872FBF1A23E0CE00867DBB /* CouponStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouponStore.h; sourceTree = "<group>"; };
@@ -97,6 +106,9 @@
 				97AE743C1A1BCF9D00FE6FAB /* AppDelegate.m */,
 				97AE745D1A1BD00E00FE6FAB /* MainTableViewController.h */,
 				97AE745E1A1BD00E00FE6FAB /* MainTableViewController.m */,
+				975386AF1A4F91FB0024FC33 /* CouponTemplate1.xib */,
+				975386A91A4F7A160024FC33 /* LocationHandler.h */,
+				975386AA1A4F7A160024FC33 /* LocationHandler.m */,
 				97872FBF1A23E0CE00867DBB /* CouponStore.h */,
 				97872FC01A23E0CE00867DBB /* CouponStore.m */,
 				97872FBC1A23E07700867DBB /* Coupon.h */,
@@ -105,6 +117,8 @@
 				9753869B1A476D8F0024FC33 /* 1.jpg */,
 				9753869C1A476D8F0024FC33 /* 2.jpg */,
 				9753869D1A476D8F0024FC33 /* 3.jpg */,
+				975386A11A4DC6F10024FC33 /* coupon2.jpg */,
+				975386A21A4DC6F10024FC33 /* coupon3.jpg */,
 				975386991A45F89D0024FC33 /* banner.jpg */,
 				97AE74461A1BCF9D00FE6FAB /* LaunchScreen.xib */,
 				97AE74371A1BCF9D00FE6FAB /* Supporting Files */,
@@ -218,12 +232,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				975386A41A4DC6F10024FC33 /* coupon2.jpg in Resources */,
+				975386A51A4DC6F10024FC33 /* coupon3.jpg in Resources */,
 				97AE74481A1BCF9D00FE6FAB /* LaunchScreen.xib in Resources */,
 				9753869E1A476D8F0024FC33 /* 1.jpg in Resources */,
 				9753869F1A476D8F0024FC33 /* 2.jpg in Resources */,
 				975386A01A476D8F0024FC33 /* 3.jpg in Resources */,
 				97AE74451A1BCF9D00FE6FAB /* Images.xcassets in Resources */,
 				9753869A1A45F89D0024FC33 /* banner.jpg in Resources */,
+				975386B01A4F91FB0024FC33 /* CouponTemplate1.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +258,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				975386AB1A4F7A160024FC33 /* LocationHandler.m in Sources */,
 				97AE743D1A1BCF9D00FE6FAB /* AppDelegate.m in Sources */,
 				97AE743A1A1BCF9D00FE6FAB /* main.m in Sources */,
 				97872FC11A23E0CE00867DBB /* CouponStore.m in Sources */,

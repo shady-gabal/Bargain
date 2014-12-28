@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MainTableViewController.m"
-            timestampString = "441235091.61051"
+            filePath = "MyCouponsTest/LocationHandler.m"
+            timestampString = "441418579.410811"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
-            landmarkName = "-tableView:cellForRowAtIndexPath:"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
+            landmarkName = "-init"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MainTableViewController.m"
-            timestampString = "441235091.61051"
+            filePath = "MyCouponsTest/LocationHandler.m"
+            timestampString = "441421686.472819"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "105"
-            endingLineNumber = "105"
-            landmarkName = "-tableView:cellForRowAtIndexPath:"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
+            landmarkName = "-locationManager:didUpdateLocations:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -8,7 +8,13 @@
 
 #import "MainTableViewController.h"
 #import "CouponStore.h"
+#import "LocationHandler.h"
 
+/* FEATURES:
+ */
+
+static float PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW = 5.f;
+static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
 
 @interface MainTableViewController ()
@@ -25,26 +31,48 @@ typedef enum : NSUInteger {
     CouponStore * _couponStore;
     
     BOOL isReadMoreSelected;
-    int readMoreIndex;
+    long readMoreIndex;
     Coupon * _currSelectedCoupon;
-    
+    LocationHandler * _locationHandler;
+//    CLLocationManager * _locationManager;
     
 }
 
 
 -(id) init{
-    self = [super init];
+    self = [super initWithStyle:UITableViewStylePlain];
     if (self){
+        
+        //create coupons
         _couponStore = [CouponStore sharedInstance];
+        
         for (int i = 0; i < 6; i++){
             Coupon * createdCoupon = [_couponStore createCoupon];
             NSLog(@"%@", createdCoupon);
         }
+        
+        //get coupons from server
+        [_couponStore getCouponsFromServer];
+        
+        //setup readmore values
         readMoreIndex = -1;
         isReadMoreSelected = NO;
+        
+        //setup location
+        _locationHandler = [LocationHandler sharedInstance];
+        if (!_locationHandler){
+            NSLog(@"Error: You must have location services enabled in order to use this app.");
+            //do stuff that prevents user from using app
+        }
+        _locationHandler.mainViewController = self;
+        [_locationHandler startTrackingLocation];
+        
+        
     }
     return self;
 }
+
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -64,7 +92,7 @@ typedef enum : NSUInteger {
 }
 
 
--(int) correctCouponIndexForIndexPath:(NSIndexPath *) indexPath{
+-(long) correctCouponIndexForIndexPath:(NSIndexPath *) indexPath{
     if (indexPath.row > readMoreIndex && isReadMoreSelected)
         return indexPath.row - 1;
     else return indexPath.row;
@@ -79,7 +107,7 @@ typedef enum : NSUInteger {
     else return [[_couponStore allCoupons] count];
 }
 
--(float) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+-(CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     //check if index of cell at this index path is a readmore box
     //if it is, return the standard height of a coupon read more box
     //else return the height of the coupon image view frame
@@ -89,9 +117,9 @@ typedef enum : NSUInteger {
         return coupon.couponReadMoreView.frame.size.height;
     }
     else{
-        int correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
+        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
-        return coupon.couponImageView.frame.size.height;
+        return coupon.couponImageView.frame.size.height + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW;
     }
 }
 
@@ -99,28 +127,33 @@ typedef enum : NSUInteger {
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     //get cell to reuse
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Coupon" forIndexPath:indexPath];
+    /* clean cell before using */
+    UIView * oldImageView = [cell.contentView viewWithTag:TAG_TYPE_IMAGE_VIEW];
+    oldImageView.center = CGPointMake(0,0);
+    [oldImageView removeFromSuperview];
+    [[cell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
 
 
     /* if the path of the cell that is to be displayed is a readmore view */
-    if (indexPath.row == readMoreIndex && isReadMoreSelected){
+    if (isReadMoreSelected && indexPath.row == readMoreIndex){
         /* get correct coupon */
         Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
-        /* clean cell before using */
-        [[cell.contentView viewWithTag:TAG_TYPE_IMAGE_VIEW]removeFromSuperview];
         /* add readmore view */
+        coupon.couponReadMoreView.center = CGPointMake(cell.contentView.bounds.size.width/2,cell.contentView.bounds.size.height/2);
         [cell.contentView addSubview:coupon.couponReadMoreView];
+
         coupon.couponReadMoreView.tag = TAG_TYPE_READ_MORE_VIEW;
         }
     
     /* else you're displaying a coupon */
     else{
         /* get correct index of the coupon in the couponstore array */
-        int correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
+        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
-        /* clean cell before using */
-        [[cell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
+        
         /* add coupon imageview */
         coupon.couponImageView.tag = TAG_TYPE_IMAGE_VIEW;
+        coupon.couponImageView.center = CGPointMake(cell.contentView.bounds.size.width/2,cell.contentView.bounds.size.height/2);
         [cell.contentView addSubview:coupon.couponImageView];
         //****** add uitableviewcell extension to enable a coupon property (?)
     }
@@ -176,7 +209,7 @@ typedef enum : NSUInteger {
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"touched coupon at index path: %d", indexPath.row);
     if (indexPath.row != readMoreIndex || ! isReadMoreSelected){
-        int correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
+        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
         
         /* if coupon is already selected, remove it's read more box and update the readmoreindeces array */

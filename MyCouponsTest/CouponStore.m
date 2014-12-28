@@ -14,8 +14,12 @@
 
 @end
 
+static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
-@implementation CouponStore
+
+@implementation CouponStore{
+    NSURLSession * _session;
+}
 
 static CouponStore * sharedStore;
 
@@ -28,7 +32,11 @@ static CouponStore * sharedStore;
 
 -(instancetype) initPrivate{
     self = [super init];
-    _coupons = [NSMutableArray array];
+    if (self){
+        _coupons = [NSMutableArray array];
+        _session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+
+    }
     return self;
 }
 
@@ -43,8 +51,8 @@ static CouponStore * sharedStore;
 }
 
 -(Coupon *) createCoupon{
-    NSArray * imageNames = @[@"1.jpg", @"2.jpg", @"3.jpg"];
-    int randomInt = arc4random() % 3;
+    NSArray * imageNames = @[@"coupon2.jpg", @"coupon3.jpg"];
+    int randomInt = arc4random() % 2;
     Coupon * newCoupon = [self createCouponWithImageNamed:imageNames[randomInt]];
     return newCoupon;
 }
@@ -53,6 +61,58 @@ static CouponStore * sharedStore;
     Coupon * newCoupon = [[Coupon alloc] initWithImageNamed:imageName];
     [self.coupons addObject:newCoupon];
     return newCoupon;
+}
+
+-(NSURL *) urlFromString:(NSString *) url{
+    NSString * requestURL = [SERVER_DOMAIN stringByAppendingString:url];
+    NSURL * ans = [NSURL URLWithString:requestURL];
+    return ans;
+}
+
+-(void) getCouponsFromServer{
+    NSMutableURLRequest * request = [[NSMutableURLRequest alloc]init];
+    NSURL * requestURL = [self urlFromString:@"coupons/getCoupons"];
+    [request setURL:requestURL];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    
+    NSLog(@"%@", [[request URL]absoluteString]);
+    
+    [[_session dataTaskWithRequest:request completionHandler:^(NSData * data, NSURLResponse * response, NSError * error){
+        if (! error){
+            NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
+            //if response returned with a status code of success
+            if ([httpResponse statusCode] >= 200 && [httpResponse statusCode] < 400){
+                //convert data received to json
+                NSLog(@"Request successful. Data returned:");
+                NSLog(@"%@", [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+                NSLog(@"converting data to json dictionary");
+                
+                NSError * serializeError = nil;
+                NSDictionary * jsonData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&serializeError];
+                
+                //if data successfully converted to json
+                if (!error){
+                    //you now have access to coupons
+                    NSLog(@"Successfully converted data to json dictionary.");
+                    NSLog(@"%@", jsonData);
+                }
+                //else there was an error converting to json
+                else{
+                    NSLog(@"error converting to json dict - %@", serializeError.description);
+                }
+            }
+            //else response returned with an unsuccessful status code
+            else{
+                NSLog(@"Response returned with unsuccessful status code.");
+            }
+        }
+        
+        else{
+            NSLog(@"%@", [error description]);
+        }
+    }] resume];
 }
 
 @end
