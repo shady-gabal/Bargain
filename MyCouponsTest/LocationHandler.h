@@ -16,6 +16,7 @@
 @property (nonatomic) CLLocation * currentUserLocation;
 @property (nonatomic, weak) MainTableViewController * mainViewController;
 @property (nonatomic) NSMutableArray * pastLocations;
+@property (nonatomic, assign) BOOL deniedLocationAccess;
 
 
 +(instancetype) sharedInstance;

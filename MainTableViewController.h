@@ -11,4 +11,8 @@
 
 @interface MainTableViewController : UITableViewController <CLLocationManagerDelegate>
 
+@property (nonatomic, assign) BOOL didShowLocationDeniedPopup;
+@property (nonatomic, assign) BOOL usingLocation;
+-(void) userDeniedLocation;
+-(void) setup;
 @end

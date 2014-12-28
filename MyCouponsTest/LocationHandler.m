@@ -33,7 +33,7 @@ static LocationHandler * locationHandler = nil;
             }
             CLAuthorizationStatus auth = [CLLocationManager authorizationStatus];
             if(auth == kCLAuthorizationStatusDenied || auth == kCLAuthorizationStatusRestricted || auth == kCLAuthorizationStatusNotDetermined){
-                NSLog(@"not allowed to use location");
+
             }
             _locationManager.delegate = self;
             _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
@@ -55,5 +55,34 @@ static LocationHandler * locationHandler = nil;
 
 
 
+-(BOOL) deniedLocationAccess{
+    CLAuthorizationStatus auth = [CLLocationManager authorizationStatus];
+    if(auth == kCLAuthorizationStatusDenied || auth == kCLAuthorizationStatusRestricted){
+        self.deniedLocationAccess = YES;
+        return YES;
+    }
+    else if (auth == kCLAuthorizationStatusNotDetermined){
+        return NO;
+    }
+    else{
+        self.deniedLocationAccess = NO;
+        self.mainViewController.usingLocation = YES;
+        [self.mainViewController setup];
+        return NO;
+    }
+}
+
+
+-(void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error{
+    if (self.deniedLocationAccess == YES){
+        [self.mainViewController userDeniedLocation];
+    }
+}
+
+//-(void) locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
+//    if (self.deniedLocationAccess == YES){
+//        [self.mainViewController userDeniedLocation];
+//    }
+//}
 
 @end

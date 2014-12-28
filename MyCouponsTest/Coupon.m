@@ -10,7 +10,10 @@
 
 static float COUPON_READ_MORE_HEIGHT = 200.f;
 static float COUPON_READ_MORE_WIDTH = 80.f;
-
+static float COUPON_HEIGHT_AS_PERCENTAGE = .20;
+static float COUPON_WIDTH_AS_PERCENTAGE = 1.f;
+static CGFloat DEVICE_WIDTH = 0.f;
+static CGFloat DEVICE_HEIGHT = 0.f;
 
 @implementation Coupon
 
@@ -42,19 +45,25 @@ static float COUPON_READ_MORE_WIDTH = 80.f;
     if (self){
         self.couponImage = [UIImage imageNamed:imageName];
         self.couponImageView = [[UIImageView alloc] initWithImage:self.couponImage];
-        self.couponImageView.frame = CGRectMake(0,0, 300, 150);
         
-        self.couponImageView.contentMode = UIViewContentModeScaleAspectFit;
+        if (DEVICE_WIDTH == 0.f || DEVICE_HEIGHT == 0.f){
+            DEVICE_HEIGHT = [[UIScreen mainScreen]bounds].size.height;
+            DEVICE_WIDTH = [[UIScreen mainScreen]bounds].size.width;
+        }
+        
+        self.couponImageView.frame = CGRectMake(0,0, DEVICE_WIDTH * COUPON_WIDTH_AS_PERCENTAGE, DEVICE_HEIGHT * COUPON_HEIGHT_AS_PERCENTAGE);
+        
+        self.couponImageView.contentMode = UIViewContentModeScaleAspectFill;
         
         CALayer * l = [self.couponImageView layer];
         [l setMasksToBounds:YES];
         [l setCornerRadius:10.0];
         
         // You can even add a border
-        //[l setBorderWidth:4.0];
-        //[l setBorderColor:[[UIColor blueColor] CGColor]];
-        
+        [l setBorderWidth:1.0];
+        [l setBorderColor:[[UIColor grayColor] CGColor]];
 
+        
         self.title = @"Title of coupon";
         self.couponReadMoreView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"banner.jpg"]];
         self.couponReadMoreView.frame = CGRectMake(0,0, 300, 300);
