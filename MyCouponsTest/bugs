@@ -1,0 +1,2 @@
+1) Last coupon seems to have a higher height than the rest of the coupons when loaded from xib
+2) Coupon does not indicate that it has been selected - just shows readmore view

@@ -23,7 +23,7 @@
  
  */
 
-static float PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW = 0.f;
+static float PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW = 3.f;
 static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
 
@@ -47,6 +47,10 @@ typedef enum : NSUInteger {
     
     /* for location */
     LocationHandler * _locationHandler;
+    
+    /* colors */
+    UIColor * _cellColor;
+    UIColor * _tableColor;
 }
 
 -(void) alertWithTitle:(NSString *)title message:(NSString *) message{
@@ -69,8 +73,17 @@ typedef enum : NSUInteger {
         }
         
         //setup table look
-//        self.tableView.backgroundColor = [UIColor blackColor];
+//        _cellColor = [UIColor colorWithRed:(211.f/255.f) green:(211.f/255.f) blue:(211.f/255.f) alpha:1.f];
         
+//        UIImageView * backgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"wood_background.jpg"]];
+//        backgroundView.frame = self.tableView.frame;
+//        self.tableView.backgroundView = backgroundView;
+       
+        _cellColor = [UIColor clearColor];
+        
+        _tableColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wood_background.jpg"]];
+        self.tableView.backgroundColor = _tableColor;
+
         //create coupon store
         _couponStore = [CouponStore sharedInstance];
         
@@ -87,9 +100,19 @@ typedef enum : NSUInteger {
 -(void) setup{
     //get coupons from server
     [_couponStore getCouponsFromServer];
-    for (int i = 0; i < 6; i++){
+    for (int i = 0; i < 3; i++){
         Coupon * createdCoupon = [_couponStore createCoupon];
         //            NSLog(@"%@", createdCoupon);
+    }
+    for (int i = 0; i < 3; i++){
+        [_couponStore createCouponFromTemplateNum:1];
+    }
+    for (int i = 0; i < 3; i++){
+        Coupon * createdCoupon = [_couponStore createCoupon];
+        //            NSLog(@"%@", createdCoupon);
+    }
+    for (int i = 0; i < 3; i++){
+        [_couponStore createCouponFromTemplateNum:1];
     }
     [self.tableView reloadData];
 }
@@ -154,11 +177,13 @@ typedef enum : NSUInteger {
     
     if (indexPath.row == _readMoreIndex && _isReadMoreSelected){
         Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
+        NSLog(@"height for readmoreview at index %ld is %f", indexPath.row, coupon.couponReadMoreView.frame.size.height);
         return coupon.couponReadMoreView.frame.size.height;
     }
     else{
         long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
+        NSLog(@"height for row at index %ld is %f", (long)indexPath.row, coupon.couponImageView.frame.size.height + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW);
         return coupon.couponImageView.frame.size.height + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW;
     }
 }
@@ -169,7 +194,7 @@ typedef enum : NSUInteger {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Coupon" forIndexPath:indexPath];
     
     //style cell
-    cell.backgroundColor = [UIColor colorWithRed:(211.f/255.f) green:(211.f/255.f) blue:(211.f/255.f) alpha:1.f];
+    cell.backgroundColor = _cellColor;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     /* clean cell before using */
@@ -198,7 +223,7 @@ typedef enum : NSUInteger {
         
         /* add coupon imageview */
         coupon.couponImageView.tag = TAG_TYPE_IMAGE_VIEW;
-        coupon.couponImageView.center = CGPointMake(cell.contentView.bounds.size.width/2,cell.contentView.bounds.size.height/2);
+        coupon.couponImageView.center = CGPointMake(cell.contentView.bounds.size.width/2,cell.contentView.bounds.size.height/2 + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW);
         [cell.contentView addSubview:coupon.couponImageView];
         //****** add uitableviewcell extension to enable a coupon property (?)
     }
@@ -248,11 +273,16 @@ typedef enum : NSUInteger {
     _isReadMoreSelected = YES;
     NSIndexPath * path = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:0];
     [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
+    [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"touched coupon at index path: %ld", (long)indexPath.row);
+//    
+//    UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
+//    cell.backgroundColor = [UIColor blackColor];
+    
     if (indexPath.row != _readMoreIndex || ! _isReadMoreSelected){
         long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];

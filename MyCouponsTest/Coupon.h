@@ -11,8 +11,8 @@
 
 @interface Coupon : NSObject
 
-@property (nonatomic) UIImageView * couponImageView;
-@property (nonatomic) UIImageView * couponReadMoreView;
+@property (nonatomic) UIView * couponImageView;
+@property (nonatomic) UIView * couponReadMoreView;
 @property (nonatomic) UIImage * couponImage;
 @property (nonatomic) NSString * title;
 @property (nonatomic, assign) BOOL selected;
@@ -20,4 +20,5 @@
 
 -(instancetype) init;
 -(instancetype) initWithImageNamed:(NSString *) imageName;
+-(instancetype) initWithTemplateNum:(int) templateNum;
 @end

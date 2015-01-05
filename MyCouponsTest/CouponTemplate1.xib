@@ -3,14 +3,47 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="Gotham-Book.otf">
+            <string>Gotham-Book</string>
+        </mutableArray>
+        <mutableArray key="Gotham-Light.otf">
+            <string>Gotham-Light</string>
+        </mutableArray>
+    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+        <view contentMode="scaleAspectFit" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="441" height="190"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="$10 OFF" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7I-wo-fdp">
+                    <rect key="frame" x="26" y="35" width="389" height="100"/>
+                    <fontDescription key="fontDescription" name="Gotham-Light" family="Gotham" pointSize="38"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="AN ORDER OF WINGS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1x4-Yo-GQr">
+                    <rect key="frame" x="26" y="66" width="389" height="100"/>
+                    <fontDescription key="fontDescription" name="Gotham-Book" family="Gotham" pointSize="12"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-            <point key="canvasLocation" x="344" y="159"/>
+            <constraints>
+                <constraint firstItem="1x4-Yo-GQr" firstAttribute="trailing" secondItem="b7I-wo-fdp" secondAttribute="trailing" id="BrB-rD-aQI"/>
+                <constraint firstItem="1x4-Yo-GQr" firstAttribute="bottom" secondItem="b7I-wo-fdp" secondAttribute="bottom" constant="31" id="MEs-D5-nA4"/>
+                <constraint firstItem="1x4-Yo-GQr" firstAttribute="centerX" secondItem="b7I-wo-fdp" secondAttribute="centerX" id="XYc-S1-OZz"/>
+                <constraint firstItem="1x4-Yo-GQr" firstAttribute="top" secondItem="b7I-wo-fdp" secondAttribute="top" constant="31" id="YXj-jo-bxX"/>
+                <constraint firstItem="1x4-Yo-GQr" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="26" id="kC4-yz-7XF"/>
+                <constraint firstAttribute="centerY" secondItem="b7I-wo-fdp" secondAttribute="centerY" constant="10" id="pL3-26-znl"/>
+                <constraint firstAttribute="centerX" secondItem="b7I-wo-fdp" secondAttribute="centerX" id="phu-Am-XZa"/>
+                <constraint firstItem="1x4-Yo-GQr" firstAttribute="leading" secondItem="b7I-wo-fdp" secondAttribute="leading" id="uLW-sJ-FRX"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="247.5" y="4"/>
         </view>
     </objects>
 </document>

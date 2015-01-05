@@ -57,6 +57,12 @@ static CouponStore * sharedStore;
     return newCoupon;
 }
 
+-(Coupon *) createCouponFromTemplateNum:(int) templateNum{
+    Coupon * newCoupon = [[Coupon alloc]initWithTemplateNum:1];
+    [self.coupons addObject:newCoupon];
+    return newCoupon;
+}
+
 -(Coupon *) createCouponWithImageNamed:(NSString *) imageName{
     Coupon * newCoupon = [[Coupon alloc] initWithImageNamed:imageName];
     [self.coupons addObject:newCoupon];
@@ -76,6 +82,9 @@ static CouponStore * sharedStore;
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    NSString * dataToSend = @"latitude=25&longitude=42&numResultsRequested=20";
+    [request setHTTPBody:[dataToSend dataUsingEncoding:NSUTF8StringEncoding]];
+    
     
     NSLog(@"%@", [[request URL]absoluteString]);
     

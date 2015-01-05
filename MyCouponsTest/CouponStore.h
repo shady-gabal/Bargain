@@ -15,6 +15,8 @@
 
 +(instancetype) sharedInstance;
 -(Coupon *) createCoupon;
+-(Coupon *) createCouponFromTemplateNum:(int) templateNum;
+
 -(void) getCouponsFromServer;
 
 @end

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9733F2E81A59DF680017EB22 /* Gotham-Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9733F2E41A59DF680017EB22 /* Gotham-Book.otf */; };
+		9733F2E91A59DF680017EB22 /* Gotham-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9733F2E51A59DF680017EB22 /* Gotham-Light.otf */; };
+		9733F2EA1A59DF680017EB22 /* Gotham-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9733F2E61A59DF680017EB22 /* Gotham-Medium.otf */; };
+		9733F2EB1A59DF680017EB22 /* Gotham-XLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9733F2E71A59DF680017EB22 /* Gotham-XLight.otf */; };
 		9753869A1A45F89D0024FC33 /* banner.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 975386991A45F89D0024FC33 /* banner.jpg */; };
 		9753869E1A476D8F0024FC33 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9753869B1A476D8F0024FC33 /* 1.jpg */; };
 		9753869F1A476D8F0024FC33 /* 2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9753869C1A476D8F0024FC33 /* 2.jpg */; };
@@ -15,6 +19,11 @@
 		975386A51A4DC6F10024FC33 /* coupon3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 975386A21A4DC6F10024FC33 /* coupon3.jpg */; };
 		975386AB1A4F7A160024FC33 /* LocationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 975386AA1A4F7A160024FC33 /* LocationHandler.m */; };
 		975386B01A4F91FB0024FC33 /* CouponTemplate1.xib in Resources */ = {isa = PBXBuildFile; fileRef = 975386AF1A4F91FB0024FC33 /* CouponTemplate1.xib */; };
+		9756D5581A5AF1C00070FAD7 /* CouponTemplate2.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9756D5571A5AF1C00070FAD7 /* CouponTemplate2.xib */; };
+		9784A6C11A5B1D3600AD112B /* pizza_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6C01A5B1D3600AD112B /* pizza_background.jpg */; };
+		9784A6C31A5B1F8800AD112B /* bugs in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6C21A5B1F8800AD112B /* bugs */; };
+		9784A6CC1A5B22C100AD112B /* steps in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6CB1A5B22C100AD112B /* steps */; };
+		9784A6CE1A5B38C100AD112B /* wood_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6CD1A5B38C100AD112B /* wood_background.jpg */; };
 		97872FBE1A23E07700867DBB /* Coupon.m in Sources */ = {isa = PBXBuildFile; fileRef = 97872FBD1A23E07700867DBB /* Coupon.m */; };
 		97872FC11A23E0CE00867DBB /* CouponStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 97872FC01A23E0CE00867DBB /* CouponStore.m */; };
 		97AE743A1A1BCF9D00FE6FAB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97AE74391A1BCF9D00FE6FAB /* main.m */; };
@@ -36,6 +45,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9733F2E41A59DF680017EB22 /* Gotham-Book.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Book.otf"; sourceTree = "<group>"; };
+		9733F2E51A59DF680017EB22 /* Gotham-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Light.otf"; sourceTree = "<group>"; };
+		9733F2E61A59DF680017EB22 /* Gotham-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Medium.otf"; sourceTree = "<group>"; };
+		9733F2E71A59DF680017EB22 /* Gotham-XLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-XLight.otf"; sourceTree = "<group>"; };
 		975386991A45F89D0024FC33 /* banner.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = banner.jpg; sourceTree = "<group>"; };
 		9753869B1A476D8F0024FC33 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		9753869C1A476D8F0024FC33 /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
@@ -45,6 +58,11 @@
 		975386A91A4F7A160024FC33 /* LocationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationHandler.h; sourceTree = "<group>"; };
 		975386AA1A4F7A160024FC33 /* LocationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationHandler.m; sourceTree = "<group>"; };
 		975386AF1A4F91FB0024FC33 /* CouponTemplate1.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CouponTemplate1.xib; sourceTree = "<group>"; };
+		9756D5571A5AF1C00070FAD7 /* CouponTemplate2.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CouponTemplate2.xib; sourceTree = "<group>"; };
+		9784A6C01A5B1D3600AD112B /* pizza_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = pizza_background.jpg; sourceTree = "<group>"; };
+		9784A6C21A5B1F8800AD112B /* bugs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = bugs; path = MyCouponsTest/bugs; sourceTree = "<group>"; };
+		9784A6CB1A5B22C100AD112B /* steps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = steps; sourceTree = "<group>"; };
+		9784A6CD1A5B38C100AD112B /* wood_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wood_background.jpg; sourceTree = "<group>"; };
 		97872FBC1A23E07700867DBB /* Coupon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coupon.h; sourceTree = "<group>"; };
 		97872FBD1A23E07700867DBB /* Coupon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Coupon.m; sourceTree = "<group>"; };
 		97872FBF1A23E0CE00867DBB /* CouponStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouponStore.h; sourceTree = "<group>"; };
@@ -81,10 +99,89 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9733F2E31A59DF430017EB22 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9784A6CD1A5B38C100AD112B /* wood_background.jpg */,
+				9784A6C51A5B224700AD112B /* Images */,
+				9784A6C41A5B223A00AD112B /* Fonts */,
+			);
+			name = Resources;
+			path = MyCouponsTest;
+			sourceTree = "<group>";
+		};
+		9784A6C41A5B223A00AD112B /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				9733F2E41A59DF680017EB22 /* Gotham-Book.otf */,
+				9733F2E51A59DF680017EB22 /* Gotham-Light.otf */,
+				9733F2E61A59DF680017EB22 /* Gotham-Medium.otf */,
+				9733F2E71A59DF680017EB22 /* Gotham-XLight.otf */,
+			);
+			name = Fonts;
+			sourceTree = "<group>";
+		};
+		9784A6C51A5B224700AD112B /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				9784A6C91A5B228200AD112B /* Misc */,
+				9784A6C81A5B226E00AD112B /* ReadMore Images */,
+				9784A6C71A5B226600AD112B /* Coupon Images */,
+				9784A6C61A5B224F00AD112B /* Background Images */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		9784A6C61A5B224F00AD112B /* Background Images */ = {
+			isa = PBXGroup;
+			children = (
+				9784A6C01A5B1D3600AD112B /* pizza_background.jpg */,
+			);
+			name = "Background Images";
+			sourceTree = "<group>";
+		};
+		9784A6C71A5B226600AD112B /* Coupon Images */ = {
+			isa = PBXGroup;
+			children = (
+				975386A11A4DC6F10024FC33 /* coupon2.jpg */,
+				975386A21A4DC6F10024FC33 /* coupon3.jpg */,
+			);
+			name = "Coupon Images";
+			sourceTree = "<group>";
+		};
+		9784A6C81A5B226E00AD112B /* ReadMore Images */ = {
+			isa = PBXGroup;
+			children = (
+				975386991A45F89D0024FC33 /* banner.jpg */,
+			);
+			name = "ReadMore Images";
+			sourceTree = "<group>";
+		};
+		9784A6C91A5B228200AD112B /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				9753869B1A476D8F0024FC33 /* 1.jpg */,
+				9753869C1A476D8F0024FC33 /* 2.jpg */,
+				9753869D1A476D8F0024FC33 /* 3.jpg */,
+			);
+			name = Misc;
+			sourceTree = "<group>";
+		};
+		9784A6CA1A5B22A000AD112B /* Diary */ = {
+			isa = PBXGroup;
+			children = (
+				9784A6C21A5B1F8800AD112B /* bugs */,
+				9784A6CB1A5B22C100AD112B /* steps */,
+			);
+			name = Diary;
+			sourceTree = "<group>";
+		};
 		97AE742B1A1BCF9D00FE6FAB = {
 			isa = PBXGroup;
 			children = (
 				97AE74361A1BCF9D00FE6FAB /* MyCouponsTest */,
+				9733F2E31A59DF430017EB22 /* Resources */,
+				9784A6CA1A5B22A000AD112B /* Diary */,
 				97AE74501A1BCF9D00FE6FAB /* MyCouponsTestTests */,
 				97AE74351A1BCF9D00FE6FAB /* Products */,
 			);
@@ -113,13 +210,8 @@
 				97872FC01A23E0CE00867DBB /* CouponStore.m */,
 				97872FBC1A23E07700867DBB /* Coupon.h */,
 				97872FBD1A23E07700867DBB /* Coupon.m */,
+				9756D5571A5AF1C00070FAD7 /* CouponTemplate2.xib */,
 				97AE74441A1BCF9D00FE6FAB /* Images.xcassets */,
-				9753869B1A476D8F0024FC33 /* 1.jpg */,
-				9753869C1A476D8F0024FC33 /* 2.jpg */,
-				9753869D1A476D8F0024FC33 /* 3.jpg */,
-				975386A11A4DC6F10024FC33 /* coupon2.jpg */,
-				975386A21A4DC6F10024FC33 /* coupon3.jpg */,
-				975386991A45F89D0024FC33 /* banner.jpg */,
 				97AE74461A1BCF9D00FE6FAB /* LaunchScreen.xib */,
 				97AE74371A1BCF9D00FE6FAB /* Supporting Files */,
 			);
@@ -201,6 +293,7 @@
 				TargetAttributes = {
 					97AE74331A1BCF9D00FE6FAB = {
 						CreatedOnToolsVersion = 6.1;
+						DevelopmentTeam = V877CJGRPU;
 					};
 					97AE744C1A1BCF9D00FE6FAB = {
 						CreatedOnToolsVersion = 6.1;
@@ -233,11 +326,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				975386A41A4DC6F10024FC33 /* coupon2.jpg in Resources */,
+				9733F2EB1A59DF680017EB22 /* Gotham-XLight.otf in Resources */,
 				975386A51A4DC6F10024FC33 /* coupon3.jpg in Resources */,
+				9733F2E81A59DF680017EB22 /* Gotham-Book.otf in Resources */,
+				9756D5581A5AF1C00070FAD7 /* CouponTemplate2.xib in Resources */,
+				9784A6C31A5B1F8800AD112B /* bugs in Resources */,
+				9784A6CE1A5B38C100AD112B /* wood_background.jpg in Resources */,
 				97AE74481A1BCF9D00FE6FAB /* LaunchScreen.xib in Resources */,
 				9753869E1A476D8F0024FC33 /* 1.jpg in Resources */,
 				9753869F1A476D8F0024FC33 /* 2.jpg in Resources */,
+				9733F2EA1A59DF680017EB22 /* Gotham-Medium.otf in Resources */,
 				975386A01A476D8F0024FC33 /* 3.jpg in Resources */,
+				9784A6CC1A5B22C100AD112B /* steps in Resources */,
+				9784A6C11A5B1D3600AD112B /* pizza_background.jpg in Resources */,
+				9733F2E91A59DF680017EB22 /* Gotham-Light.otf in Resources */,
 				97AE74451A1BCF9D00FE6FAB /* Images.xcassets in Resources */,
 				9753869A1A45F89D0024FC33 /* banner.jpg in Resources */,
 				975386B01A4F91FB0024FC33 /* CouponTemplate1.xib in Resources */,
@@ -379,9 +481,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = MyCouponsTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -389,9 +494,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = MyCouponsTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

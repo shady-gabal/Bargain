@@ -11,32 +11,14 @@
 static float COUPON_READ_MORE_HEIGHT = 200.f;
 static float COUPON_READ_MORE_WIDTH = 80.f;
 static float COUPON_HEIGHT_AS_PERCENTAGE = .20;
-static float COUPON_WIDTH_AS_PERCENTAGE = 1.f;
+static float COUPON_WIDTH_AS_PERCENTAGE = .95f;
 static CGFloat DEVICE_WIDTH = 0.f;
 static CGFloat DEVICE_HEIGHT = 0.f;
 
 @implementation Coupon
 
 -(instancetype) init{
-    self = [super init];
-    if (self){
-        self.couponImage = [UIImage imageNamed:@"1.jpg"];
-        self.couponImageView = [[UIImageView alloc] initWithImage:self.couponImage];
-        self.couponImageView.frame = CGRectMake(0,0, 100, 100);
-        self.couponImageView.contentMode = UIViewContentModeScaleAspectFill;
-        CALayer * l = [self.couponImageView layer];
-        [l setMasksToBounds:YES];
-        [l setCornerRadius:100.0];
-        
-        // You can even add a border
-        [l setBorderWidth:4.0];
-        [l setBorderColor:[[UIColor blueColor] CGColor]];
-        
-        self.title = @"Title of coupon";
-        self.couponReadMoreView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"banner.jpg"]];
-        self.couponReadMoreView.frame = CGRectMake(0,0, COUPON_READ_MORE_WIDTH, COUPON_READ_MORE_HEIGHT);
-    }
-    return self;
+    return [[Coupon alloc]initWithImageNamed:@"1"];
 }
 
 
@@ -53,15 +35,17 @@ static CGFloat DEVICE_HEIGHT = 0.f;
         
         self.couponImageView.frame = CGRectMake(0,0, DEVICE_WIDTH * COUPON_WIDTH_AS_PERCENTAGE, DEVICE_HEIGHT * COUPON_HEIGHT_AS_PERCENTAGE);
         
-        self.couponImageView.contentMode = UIViewContentModeScaleAspectFill;
+        NSLog(@"image height %f, image width %f", self.couponImageView.frame.size.height, self.couponImageView.frame.size.width);
+        
+        self.couponImageView.contentMode = UIViewContentModeScaleAspectFit;
         
         CALayer * l = [self.couponImageView layer];
         [l setMasksToBounds:YES];
         [l setCornerRadius:10.0];
         
         // You can even add a border
-        [l setBorderWidth:1.0];
-        [l setBorderColor:[[UIColor grayColor] CGColor]];
+//        [l setBorderWidth:1.0];
+//        [l setBorderColor:[[UIColor grayColor] CGColor]];
 
         
         self.title = @"Title of coupon";
@@ -72,4 +56,52 @@ static CGFloat DEVICE_HEIGHT = 0.f;
     return self;
 }
 
+-(instancetype) initWithTemplateNum:(int) templateNum{
+    self = [super init];
+    if (self){
+        NSString * templateToLoad = [NSString stringWithFormat:@"CouponTemplate%d", templateNum];
+
+        if (DEVICE_WIDTH == 0.f || DEVICE_HEIGHT == 0.f){
+            DEVICE_HEIGHT = [[UIScreen mainScreen]bounds].size.height;
+            DEVICE_WIDTH = [[UIScreen mainScreen]bounds].size.width;
+        }
+
+        
+        UIView * xibView = [[NSBundle mainBundle]loadNibNamed:templateToLoad owner:self options:nil][0];
+        xibView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        xibView.autoresizesSubviews = YES;
+        xibView.frame = CGRectMake(0,0, DEVICE_WIDTH * COUPON_WIDTH_AS_PERCENTAGE, DEVICE_HEIGHT * COUPON_HEIGHT_AS_PERCENTAGE);
+        self.couponImageView = xibView;
+        
+        
+        UIImageView * xibBackgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"pizza_background.jpg"]];
+        xibBackgroundView.alpha = .5f;
+        xibBackgroundView.frame = self.couponImageView.frame;
+        [xibView addSubview:xibBackgroundView];
+        [xibView sendSubviewToBack:xibBackgroundView];
+        
+        
+        NSLog(@"Template size: %f height, %f width", xibView.frame.size.height, xibView.frame.size.width);
+
+////        
+
+//
+        self.couponImageView.contentMode = UIViewContentModeScaleAspectFit;
+        
+        CALayer * l = [self.couponImageView layer];
+        [l setMasksToBounds:YES];
+        [l setCornerRadius:10.0];
+        
+        // You can even add a border
+        [l setBorderWidth:1.0];
+        [l setBorderColor:[[UIColor grayColor] CGColor]];
+        
+        
+        self.title = @"Title of coupon";
+        self.couponReadMoreView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"banner.jpg"]];
+        self.couponReadMoreView.frame = CGRectMake(0,0, 300, 300);
+
+    }
+    return self;
+}
 @end

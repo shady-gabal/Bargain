@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyCouponsTest/CouponStore.m"
-            timestampString = "441499996.351609"
+            timestampString = "442098752.980884"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
             landmarkName = "-getCouponsFromServer"
             landmarkType = "5">
          </BreakpointContent>
