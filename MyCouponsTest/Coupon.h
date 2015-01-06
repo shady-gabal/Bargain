@@ -9,13 +9,19 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface Coupon : NSObject
+@interface Coupon : UITableViewCell
 
 @property (nonatomic) UIView * couponImageView;
 @property (nonatomic) UIView * couponReadMoreView;
 @property (nonatomic) UIImage * couponImage;
 @property (nonatomic) NSString * title;
-@property (nonatomic, assign) BOOL selected;
+
+@property (nonatomic) IBOutlet UIImageView * backgroundView;
+@property (nonatomic) IBOutlet UILabel * discountLabel;
+@property (nonatomic) IBOutlet UILabel * onObjectLabel;
+@property (nonatomic) IBOutlet NSString * finePrintString;
+
+@property (nonatomic, assign) BOOL selectedForReadMore;
 
 
 -(instancetype) init;

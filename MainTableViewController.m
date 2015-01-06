@@ -177,7 +177,7 @@ typedef enum : NSUInteger {
     
     if (indexPath.row == _readMoreIndex && _isReadMoreSelected){
         Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
-        NSLog(@"height for readmoreview at index %ld is %f", indexPath.row, coupon.couponReadMoreView.frame.size.height);
+        NSLog(@"height for readmoreview at index %ld is %f", (long)indexPath.row, coupon.couponReadMoreView.frame.size.height);
         return coupon.couponReadMoreView.frame.size.height;
     }
     else{
@@ -258,7 +258,7 @@ typedef enum : NSUInteger {
     UITableViewCell * readMoreCell = [self.tableView cellForRowAtIndexPath:path];
     [[readMoreCell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
     [self.tableView deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
-    _currSelectedCoupon.selected = NO;
+    _currSelectedCoupon.selectedForReadMore = NO;
     _currSelectedCoupon = nil;
     _readMoreIndex = -1;
     
@@ -267,7 +267,7 @@ typedef enum : NSUInteger {
 -(void) insertReadMoreViewForCoupon:(Coupon *) coupon atIndexPath:(NSIndexPath *) indexPath{
     NSLog(@"inserting readmoreview for coupon at index path: %ld", (long)indexPath.row);
     _currSelectedCoupon = coupon;
-    _currSelectedCoupon.selected = YES;
+    _currSelectedCoupon.selectedForReadMore = YES;
     
     _readMoreIndex = indexPath.row + 1;
     _isReadMoreSelected = YES;
@@ -288,7 +288,7 @@ typedef enum : NSUInteger {
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
         
         /* if coupon is already selected, remove it's read more box and update the readmoreindeces array */
-        if (coupon.selected){
+        if (coupon.selectedForReadMore){
             NSLog(@"coupon deselected");
             [self removeReadMoreView];
         }
