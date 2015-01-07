@@ -105,14 +105,14 @@ typedef enum : NSUInteger {
         //            NSLog(@"%@", createdCoupon);
     }
     for (int i = 0; i < 3; i++){
-        [_couponStore createCouponFromTemplateNum:1];
+        [_couponStore createCouponFromTemplateNum:1 withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
     }
     for (int i = 0; i < 3; i++){
         Coupon * createdCoupon = [_couponStore createCoupon];
         //            NSLog(@"%@", createdCoupon);
     }
     for (int i = 0; i < 3; i++){
-        [_couponStore createCouponFromTemplateNum:1];
+        [_couponStore createCouponFromTemplateNum:1 withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
     }
     [self.tableView reloadData];
 }
@@ -177,13 +177,13 @@ typedef enum : NSUInteger {
     
     if (indexPath.row == _readMoreIndex && _isReadMoreSelected){
         Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
-        NSLog(@"height for readmoreview at index %ld is %f", (long)indexPath.row, coupon.couponReadMoreView.frame.size.height);
+//        NSLog(@"height for readmoreview at index %ld is %f", (long)indexPath.row, coupon.couponReadMoreView.frame.size.height);
         return coupon.couponReadMoreView.frame.size.height;
     }
     else{
         long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
-        NSLog(@"height for row at index %ld is %f", (long)indexPath.row, coupon.couponImageView.frame.size.height + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW);
+//        NSLog(@"height for row at index %ld is %f", (long)indexPath.row, coupon.couponImageView.frame.size.height + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW);
         return coupon.couponImageView.frame.size.height + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW;
     }
 }

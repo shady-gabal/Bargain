@@ -24,6 +24,8 @@
 		9784A6C31A5B1F8800AD112B /* bugs in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6C21A5B1F8800AD112B /* bugs */; };
 		9784A6CC1A5B22C100AD112B /* steps in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6CB1A5B22C100AD112B /* steps */; };
 		9784A6CE1A5B38C100AD112B /* wood_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6CD1A5B38C100AD112B /* wood_background.jpg */; };
+		9784A6D01A5C3FEF00AD112B /* CouponTemplate3.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6CF1A5C3FEF00AD112B /* CouponTemplate3.xib */; };
+		9784A6D21A5C456B00AD112B /* sushi_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6D11A5C456B00AD112B /* sushi_background.jpg */; };
 		97872FBE1A23E07700867DBB /* Coupon.m in Sources */ = {isa = PBXBuildFile; fileRef = 97872FBD1A23E07700867DBB /* Coupon.m */; };
 		97872FC11A23E0CE00867DBB /* CouponStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 97872FC01A23E0CE00867DBB /* CouponStore.m */; };
 		97AE743A1A1BCF9D00FE6FAB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97AE74391A1BCF9D00FE6FAB /* main.m */; };
@@ -63,6 +65,8 @@
 		9784A6C21A5B1F8800AD112B /* bugs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = bugs; path = MyCouponsTest/bugs; sourceTree = "<group>"; };
 		9784A6CB1A5B22C100AD112B /* steps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = steps; sourceTree = "<group>"; };
 		9784A6CD1A5B38C100AD112B /* wood_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wood_background.jpg; sourceTree = "<group>"; };
+		9784A6CF1A5C3FEF00AD112B /* CouponTemplate3.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CouponTemplate3.xib; sourceTree = "<group>"; };
+		9784A6D11A5C456B00AD112B /* sushi_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sushi_background.jpg; sourceTree = "<group>"; };
 		97872FBC1A23E07700867DBB /* Coupon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coupon.h; sourceTree = "<group>"; };
 		97872FBD1A23E07700867DBB /* Coupon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Coupon.m; sourceTree = "<group>"; };
 		97872FBF1A23E0CE00867DBB /* CouponStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouponStore.h; sourceTree = "<group>"; };
@@ -102,7 +106,6 @@
 		9733F2E31A59DF430017EB22 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9784A6CD1A5B38C100AD112B /* wood_background.jpg */,
 				9784A6C51A5B224700AD112B /* Images */,
 				9784A6C41A5B223A00AD112B /* Fonts */,
 			);
@@ -135,6 +138,8 @@
 		9784A6C61A5B224F00AD112B /* Background Images */ = {
 			isa = PBXGroup;
 			children = (
+				9784A6CD1A5B38C100AD112B /* wood_background.jpg */,
+				9784A6D11A5C456B00AD112B /* sushi_background.jpg */,
 				9784A6C01A5B1D3600AD112B /* pizza_background.jpg */,
 			);
 			name = "Background Images";
@@ -210,6 +215,7 @@
 				97872FBC1A23E07700867DBB /* Coupon.h */,
 				97872FBD1A23E07700867DBB /* Coupon.m */,
 				975386AF1A4F91FB0024FC33 /* CouponTemplate1.xib */,
+				9784A6CF1A5C3FEF00AD112B /* CouponTemplate3.xib */,
 				9756D5571A5AF1C00070FAD7 /* CouponTemplate2.xib */,
 				97AE74441A1BCF9D00FE6FAB /* Images.xcassets */,
 				97AE74461A1BCF9D00FE6FAB /* LaunchScreen.xib */,
@@ -329,11 +335,13 @@
 				9733F2EB1A59DF680017EB22 /* Gotham-XLight.otf in Resources */,
 				975386A51A4DC6F10024FC33 /* coupon3.jpg in Resources */,
 				9733F2E81A59DF680017EB22 /* Gotham-Book.otf in Resources */,
+				9784A6D01A5C3FEF00AD112B /* CouponTemplate3.xib in Resources */,
 				9756D5581A5AF1C00070FAD7 /* CouponTemplate2.xib in Resources */,
 				9784A6C31A5B1F8800AD112B /* bugs in Resources */,
 				9784A6CE1A5B38C100AD112B /* wood_background.jpg in Resources */,
 				97AE74481A1BCF9D00FE6FAB /* LaunchScreen.xib in Resources */,
 				9753869E1A476D8F0024FC33 /* 1.jpg in Resources */,
+				9784A6D21A5C456B00AD112B /* sushi_background.jpg in Resources */,
 				9753869F1A476D8F0024FC33 /* 2.jpg in Resources */,
 				9733F2EA1A59DF680017EB22 /* Gotham-Medium.otf in Resources */,
 				975386A01A476D8F0024FC33 /* 3.jpg in Resources */,

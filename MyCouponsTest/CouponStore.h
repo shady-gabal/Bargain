@@ -15,7 +15,7 @@
 
 +(instancetype) sharedInstance;
 -(Coupon *) createCoupon;
--(Coupon *) createCouponFromTemplateNum:(int) templateNum;
+-(Coupon *) createCouponFromTemplateNum:(int) templateNum withImageName:(NSString *) imageName withDiscountText:(NSString *) discountText withOnObjectText:(NSString *) onObjectText;
 
 -(void) getCouponsFromServer;
 

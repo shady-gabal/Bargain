@@ -26,5 +26,5 @@
 
 -(instancetype) init;
 -(instancetype) initWithImageNamed:(NSString *) imageName;
--(instancetype) initWithTemplateNum:(int) templateNum;
+-(instancetype) initWithTemplateNum:(int) templateNum withImageName:(NSString *) imageName withDiscountText:(NSString *) discountText withOnObjectText:(NSString *) onObjectText;
 @end
