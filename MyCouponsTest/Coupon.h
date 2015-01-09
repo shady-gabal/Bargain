@@ -14,17 +14,17 @@
 @property (nonatomic) UIView * couponImageView;
 @property (nonatomic) UIView * couponReadMoreView;
 @property (nonatomic) UIImage * couponImage;
-@property (nonatomic) NSString * title;
+@property (nonatomic) NSString * templateString;
 
-@property (nonatomic) IBOutlet UIImageView * backgroundView;
-@property (nonatomic) IBOutlet UILabel * discountLabel;
-@property (nonatomic) IBOutlet UILabel * onObjectLabel;
-@property (nonatomic) IBOutlet NSString * finePrintString;
+@property (nonatomic) UIImageView * backgroundView;
+@property (nonatomic) NSString * discountString;
+@property (nonatomic) NSString * onObjectString;
+@property (nonatomic) NSString * finePrintString;
 
 @property (nonatomic, assign) BOOL selectedForReadMore;
 
 
 -(instancetype) init;
 -(instancetype) initWithImageNamed:(NSString *) imageName;
--(instancetype) initWithTemplateNum:(int) templateNum withImageName:(NSString *) imageName withDiscountText:(NSString *) discountText withOnObjectText:(NSString *) onObjectText;
+-(instancetype) initWithTemplate:(NSString *) template withImageName:(NSString *) imageName withDiscountText:(NSString *) discountText withOnObjectText:(NSString *) onObjectText;
 @end

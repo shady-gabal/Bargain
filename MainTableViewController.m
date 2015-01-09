@@ -9,6 +9,9 @@
 #import "MainTableViewController.h"
 #import "CouponStore.h"
 #import "LocationHandler.h"
+#import "CouponDisplayCell.h"
+#import "ReadMoreDisplayCell.h"
+#import "CouponCellSizes.h"
 
 /* FEATURES:
  1) Displays all coupons near you sorted by distance and popularity pulled from online database
@@ -23,7 +26,10 @@
  
  */
 
-static float PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW = 3.f;
+static float PADDING_BETWEEN_CELLS = 2.f * 3.f;
+static float READMORE_HEIGHT = 300.f;
+
+
 static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
 
@@ -53,10 +59,26 @@ typedef enum : NSUInteger {
     UIColor * _tableColor;
 }
 
--(void) alertWithTitle:(NSString *)title message:(NSString *) message{
-    UIAlertView * alert = [[UIAlertView alloc]initWithTitle:title message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-    [alert show];
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Coupon"];
+    self.tableView.separatorColor = [UIColor clearColor];
+    
+    UINib * couponTemplate2Nib = [UINib nibWithNibName:@"CouponTemplate2" bundle:[NSBundle mainBundle]];
+    [self.tableView registerNib:couponTemplate2Nib forCellReuseIdentifier:@"CouponTemplate2"];
+    
+    UINib * readMoreViewNib = [UINib nibWithNibName:@"ReadMoreDisplayCell" bundle:[NSBundle mainBundle]];
+    [self.tableView registerNib:readMoreViewNib forCellReuseIdentifier:@"ReadMoreDisplayCell"];
+    
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
+    
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
+
+
 
 -(id) init{
     self = [super initWithStyle:UITableViewStylePlain];
@@ -73,8 +95,6 @@ typedef enum : NSUInteger {
         }
         
         //setup table look
-//        _cellColor = [UIColor colorWithRed:(211.f/255.f) green:(211.f/255.f) blue:(211.f/255.f) alpha:1.f];
-        
 //        UIImageView * backgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"wood_background.jpg"]];
 //        backgroundView.frame = self.tableView.frame;
 //        self.tableView.backgroundView = backgroundView;
@@ -87,6 +107,7 @@ typedef enum : NSUInteger {
         //create coupon store
         _couponStore = [CouponStore sharedInstance];
         
+        
         //setup readmore values
         _readMoreIndex = -1;
         _isReadMoreSelected = NO;
@@ -98,56 +119,23 @@ typedef enum : NSUInteger {
 }
 
 -(void) setup{
+    NSLog(@"setup called");
     //get coupons from server
     [_couponStore getCouponsFromServer];
+//    for (int i = 0; i < 3; i++){
+//        Coupon * createdCoupon = [_couponStore createCoupon];
+//        //            NSLog(@"%@", createdCoupon);
+//    }
     for (int i = 0; i < 3; i++){
-        Coupon * createdCoupon = [_couponStore createCoupon];
-        //            NSLog(@"%@", createdCoupon);
+        [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
     }
     for (int i = 0; i < 3; i++){
-        [_couponStore createCouponFromTemplateNum:1 withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
-    }
-    for (int i = 0; i < 3; i++){
-        Coupon * createdCoupon = [_couponStore createCoupon];
-        //            NSLog(@"%@", createdCoupon);
-    }
-    for (int i = 0; i < 3; i++){
-        [_couponStore createCouponFromTemplateNum:1 withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
+        [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
     }
     [self.tableView reloadData];
 }
 
--(BOOL) usingLocation{
-    _usingLocation = ![_locationHandler deniedLocationAccess];
-    return _usingLocation;
-}
 
--(void) userDeniedLocation{
-    NSLog(@"yo %d", _locationHandler.deniedLocationAccess);
-    if (_locationHandler.deniedLocationAccess && !self.didShowLocationDeniedPopup){
-        self.didShowLocationDeniedPopup = YES;
-        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Cannot use app" message:@"We need your location in order to find the coupons closest to you. Without it, this app will not work." delegate:self cancelButtonTitle:@"Fix" otherButtonTitles:nil];
-        [alert show];
-    }
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
-    [[UIApplication sharedApplication] openURL: [NSURL URLWithString: UIApplicationOpenSettingsURLString]];
-}
-
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Coupon"];
-    self.tableView.separatorColor = [UIColor clearColor];
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -161,75 +149,7 @@ typedef enum : NSUInteger {
     else return indexPath.row;
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    // Return the number of rows in the section.
-    if (_isReadMoreSelected)
-        return [[_couponStore allCoupons] count] + 1;
-    else return [[_couponStore allCoupons] count];
-}
-
--(CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    //check if index of cell at this index path is a readmore box
-    //if it is, return the standard height of a coupon read more box
-    //else return the height of the coupon image view frame
-    
-    if (indexPath.row == _readMoreIndex && _isReadMoreSelected){
-        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
-//        NSLog(@"height for readmoreview at index %ld is %f", (long)indexPath.row, coupon.couponReadMoreView.frame.size.height);
-        return coupon.couponReadMoreView.frame.size.height;
-    }
-    else{
-        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
-        Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
-//        NSLog(@"height for row at index %ld is %f", (long)indexPath.row, coupon.couponImageView.frame.size.height + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW);
-        return coupon.couponImageView.frame.size.height + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW;
-    }
-}
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    //get cell to reuse
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Coupon" forIndexPath:indexPath];
-    
-    //style cell
-    cell.backgroundColor = _cellColor;
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
-    /* clean cell before using */
-    UIView * oldImageView = [cell.contentView viewWithTag:TAG_TYPE_IMAGE_VIEW];
-//    oldImageView.center = CGPointMake(0,0);
-    [oldImageView removeFromSuperview];
-    [[cell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
-
-
-    /* if the path of the cell that is to be displayed is a readmore view */
-    if (_isReadMoreSelected && indexPath.row == _readMoreIndex){
-        /* get correct coupon */
-        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
-        /* add readmore view */
-        coupon.couponReadMoreView.center = CGPointMake(cell.contentView.bounds.size.width/2,cell.contentView.bounds.size.height/2);
-        [cell.contentView addSubview:coupon.couponReadMoreView];
-
-        coupon.couponReadMoreView.tag = TAG_TYPE_READ_MORE_VIEW;
-        }
-    
-    /* else you're displaying a coupon */
-    else{
-        /* get correct index of the coupon in the couponstore array */
-        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
-        Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
-        
-        /* add coupon imageview */
-        coupon.couponImageView.tag = TAG_TYPE_IMAGE_VIEW;
-        coupon.couponImageView.center = CGPointMake(cell.contentView.bounds.size.width/2,cell.contentView.bounds.size.height/2 + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW);
-        [cell.contentView addSubview:coupon.couponImageView];
-        //****** add uitableviewcell extension to enable a coupon property (?)
-    }
-    return cell;
-}
-
+#pragma mark -  Custom methods for table view UI
 
 - (void)listSubviewsOfView:(UIView *)view {
     
@@ -253,7 +173,7 @@ typedef enum : NSUInteger {
 -(void) removeReadMoreView{
     //first set _isReadMoreSelected to false so that when deleting rows the table cell count is adjusted
     _isReadMoreSelected = NO;
-
+    
     NSIndexPath * path = [NSIndexPath indexPathForRow:_readMoreIndex inSection:0];
     UITableViewCell * readMoreCell = [self.tableView cellForRowAtIndexPath:path];
     [[readMoreCell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
@@ -272,16 +192,120 @@ typedef enum : NSUInteger {
     _readMoreIndex = indexPath.row + 1;
     _isReadMoreSelected = YES;
     NSIndexPath * path = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:0];
-    [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
+    [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     
 }
 
+#pragma mark - Table view data source
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    // Return the number of rows in the section.
+    if (_isReadMoreSelected)
+        return [[_couponStore allCoupons] count] + 1;
+    else return [[_couponStore allCoupons] count];
+}
+
+-(CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    //check if index of cell at this index path is a readmore box
+    //if it is, return the standard height of a coupon read more box
+    //else return the height of the coupon image view frame
+    
+    if (indexPath.row == _readMoreIndex && _isReadMoreSelected){
+//        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
+        return READMORE_HEIGHT;
+    }
+    else{
+//        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
+//        Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
+        return COUPON_HEIGHT;
+    }
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    //get cell to reuse
+//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Coupon" forIndexPath:indexPath];
+//    
+//    //style cell
+//    cell.backgroundColor = _cellColor;
+//    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+//    
+//    /* clean cell before using */
+//    UIView * oldImageView = [cell.contentView viewWithTag:TAG_TYPE_IMAGE_VIEW];
+////    oldImageView.center = CGPointMake(0,0);
+//    [oldImageView removeFromSuperview];
+//    [[cell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
+//
+//
+//    /* if the path of the cell that is to be displayed is a readmore view */
+//    if (_isReadMoreSelected && indexPath.row == _readMoreIndex){
+//        /* get correct coupon */
+//        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
+//        /* add readmore view */
+//        }
+//    
+//    /* else you're displaying a coupon */
+//    else{
+//        /* get correct index of the coupon in the couponstore array */
+//        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
+//        Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
+//        
+//        /* add coupon imageview */
+//        coupon.couponImageView.tag = TAG_TYPE_IMAGE_VIEW;
+//        coupon.couponImageView.center = CGPointMake(cell.contentView.bounds.size.width/2,cell.contentView.bounds.size.height/2 + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW);
+//        [cell.contentView addSubview:coupon.couponImageView];
+//        //****** add uitableviewcell extension to enable a coupon property (?)
+//    }
+//    return cell;
+    
+    if (_isReadMoreSelected && indexPath.row == _readMoreIndex){
+        ReadMoreDisplayCell * cell = [tableView dequeueReusableCellWithIdentifier:@"ReadMoreDisplayCell" forIndexPath:indexPath];
+        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
+        
+        return cell;
+
+    }
+    else{
+
+        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
+        Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
+
+        CouponDisplayCell * cell = [tableView dequeueReusableCellWithIdentifier:@"CouponTemplate2" forIndexPath:indexPath];
+        CGRect newFrame = cell.frame;
+        newFrame.size.height = COUPON_HEIGHT - PADDING_BETWEEN_CELLS;
+//        cell.frame = newFrame;
+        [cell setFrame:newFrame];
+        
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        cell.discountLabel.text = coupon.discountString;
+        cell.onObjectLabel.text = coupon.onObjectString;
+        
+        CALayer * l = [cell layer];
+        [l setMasksToBounds:YES];
+        [l setCornerRadius:10.0];
+        [l setBorderWidth:1.0];
+        [l setBorderColor:[[UIColor grayColor] CGColor]];
+
+        
+        UIImageView * xibBackgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"pizza_background.jpg"]];
+        xibBackgroundView.alpha = .5f;
+        
+        cell.backgroundView = xibBackgroundView;
+        return cell;
+    }
+}
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"touched coupon at index path: %ld", (long)indexPath.row);
-//    
-//    UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
-//    cell.backgroundColor = [UIColor blackColor];
+    //
+    UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
+    CGRect newFrame = cell.frame;
+//    newFrame.size.height -= 0;
+    cell.frame = newFrame;
+    
+    //    cell.backgroundColor = [UIColor blackColor];
     
     if (indexPath.row != _readMoreIndex || ! _isReadMoreSelected){
         long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
@@ -300,15 +324,47 @@ typedef enum : NSUInteger {
                 if (_readMoreIndex < indexPath.row)
                     indexPath = [NSIndexPath indexPathForRow:indexPath.row-1 inSection:indexPath.section];
                 [self removeReadMoreView];
-
+                
             }
             
             NSLog(@"coupon selected");
             [self insertReadMoreViewForCoupon:coupon atIndexPath:indexPath];
         }
     }
-
+    
 }
+
+
+#pragma mark - Location
+
+-(BOOL) usingLocation{
+    _usingLocation = ![_locationHandler deniedLocationAccess];
+    return _usingLocation;
+}
+
+-(void) userDeniedLocation{
+    NSLog(@"yo %d", _locationHandler.deniedLocationAccess);
+    if (_locationHandler.deniedLocationAccess && !self.didShowLocationDeniedPopup){
+        self.didShowLocationDeniedPopup = YES;
+        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Cannot use app" message:@"We need your location in order to find the coupons closest to you. Without it, this app will not work." delegate:self cancelButtonTitle:@"Fix" otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
+
+#pragma mark - Alerts for Location
+
+-(void) alertWithTitle:(NSString *)title message:(NSString *) message{
+    UIAlertView * alert = [[UIAlertView alloc]initWithTitle:title message:message delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    [alertView dismissWithClickedButtonIndex:buttonIndex animated:YES];
+    [[UIApplication sharedApplication] openURL: [NSURL URLWithString: UIApplicationOpenSettingsURLString]];
+}
+
+
 
 /*
 // Override to support conditional editing of the table view.

@@ -57,8 +57,8 @@ static CouponStore * sharedStore;
     return newCoupon;
 }
 
--(Coupon *) createCouponFromTemplateNum:(int) templateNum withImageName:(NSString *)imageName withDiscountText:(NSString *)discountText withOnObjectText:(NSString *)onObjectText{
-    Coupon * newCoupon = [[Coupon alloc]initWithTemplateNum:templateNum withImageName:imageName withDiscountText:discountText withOnObjectText:onObjectText];
+-(Coupon *) createCouponFromTemplate:(NSString *) template withImageName:(NSString *)imageName withDiscountText:(NSString *)discountText withOnObjectText:(NSString *)onObjectText{
+    Coupon * newCoupon = [[Coupon alloc]initWithTemplate:template withImageName:imageName withDiscountText:discountText withOnObjectText:onObjectText];
     [self.coupons addObject:newCoupon];
     return newCoupon;
 }

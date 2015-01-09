@@ -12,10 +12,10 @@
         </mutableArray>
     </customFonts>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="Coupon">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CouponDisplayCell">
             <connections>
-                <outlet property="discountLabel" destination="b7I-wo-fdp" id="YA6-30-exG"/>
-                <outlet property="onObjectLabel" destination="1x4-Yo-GQr" id="Z9D-J4-0LB"/>
+                <outlet property="discountLabel" destination="b7I-wo-fdp" id="p9b-UZ-ivt"/>
+                <outlet property="onObjectLabel" destination="1x4-Yo-GQr" id="YMp-xy-cTf"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>

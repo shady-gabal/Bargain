@@ -48,7 +48,6 @@ static CGFloat DEVICE_HEIGHT = 0.f;
 //        [l setBorderColor:[[UIColor grayColor] CGColor]];
 
         
-        self.title = @"Title of coupon";
         self.couponReadMoreView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"banner.jpg"]];
         self.couponReadMoreView.frame = CGRectMake(0,0, 300, 300);
 
@@ -56,7 +55,7 @@ static CGFloat DEVICE_HEIGHT = 0.f;
     return self;
 }
 
--(instancetype) initWithTemplateNum:(int) templateNum withImageName:(NSString *)imageName withDiscountText:(NSString *)discountText withOnObjectText:(NSString *)onObjectText{
+-(instancetype) initWithTemplate:(NSString *) template withImageName:(NSString *)imageName withDiscountText:(NSString *)discountText withOnObjectText:(NSString *)onObjectText{
     self = [super init];
     if (self){
         
@@ -66,28 +65,13 @@ static CGFloat DEVICE_HEIGHT = 0.f;
         }
 
         /* LOADING XIBVIEW */
-        NSString * templateToLoad = [NSString stringWithFormat:@"CouponTemplate%d", templateNum];
-        UIView * xibView = [[NSBundle mainBundle]loadNibNamed:templateToLoad owner:self options:nil][0];
 
-        /* XIBVIEW */
-        
-        xibView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        xibView.autoresizesSubviews = YES;
-        xibView.frame = CGRectMake(0,0, DEVICE_WIDTH * COUPON_WIDTH_AS_PERCENTAGE, DEVICE_HEIGHT * COUPON_HEIGHT_AS_PERCENTAGE);
-        self.couponImageView = xibView; //changing the order of this to after adding background to xib breaks this for some reason
 
-        UIImageView * xibBackgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:imageName]];
-        xibBackgroundView.alpha = .5f;
-        xibBackgroundView.frame = self.couponImageView.frame;
-        [xibView addSubview:xibBackgroundView];
-        [xibView sendSubviewToBack:xibBackgroundView];
-
-       
+        self.templateString = template;
         
         /* SETTING DATA OF COUPON */
-       self.discountLabel.text = discountText;
-        self.onObjectLabel.text = onObjectText;
-        self.title = @"Title of coupon";
+        self.discountString = discountText;
+        self.onObjectString = onObjectText;
 
         
         /* COUPON IMAGE VIEW */
@@ -101,17 +85,16 @@ static CGFloat DEVICE_HEIGHT = 0.f;
 
         
         /* READMORE VIEW */
-        self.couponReadMoreView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"banner.jpg"]];
-        self.couponReadMoreView.frame = CGRectMake(0,0, 300, 300);
+//        self.couponReadMoreView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"banner.jpg"]];
+//        self.couponReadMoreView.frame = CGRectMake(0,0, 300, 300);
 
         
-        CALayer * r = [self.couponReadMoreView layer];
-        [r setMasksToBounds:YES];
-        [r setCornerRadius:15.0];
-        
+//        CALayer * r = [self.couponReadMoreView layer];
+//        [r setMasksToBounds:YES];
+//        [r setCornerRadius:15.0];
+//        
         /* LOGGING */
-        NSLog(@"creating %@", templateToLoad);
-        NSLog(@"Template size: %f height, %f width", xibView.frame.size.height, xibView.frame.size.width);
+        NSLog(@"creating %@", template);
 
 
     }
