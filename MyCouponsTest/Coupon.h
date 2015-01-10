@@ -20,6 +20,7 @@
 @property (nonatomic) NSString * discountString;
 @property (nonatomic) NSString * onObjectString;
 @property (nonatomic) NSString * finePrintString;
+@property (nonatomic) NSString * imageString;
 
 @property (nonatomic, assign) BOOL selectedForReadMore;
 

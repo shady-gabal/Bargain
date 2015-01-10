@@ -11,7 +11,6 @@
 #import "LocationHandler.h"
 #import "CouponDisplayCell.h"
 #import "ReadMoreDisplayCell.h"
-#import "CouponCellSizes.h"
 
 /* FEATURES:
  1) Displays all coupons near you sorted by distance and popularity pulled from online database
@@ -26,14 +25,15 @@
  
  */
 
-static float PADDING_BETWEEN_CELLS = 2.f * 3.f;
 static float READMORE_HEIGHT = 300.f;
-
+static float FIRST_CELL_PADDING_TOP = 58.f;
 
 static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
 
 @interface MainTableViewController ()
+
+@property (nonatomic) NSURLSession * fetchingCouponsSession;
 
 @end
 
@@ -57,6 +57,10 @@ typedef enum : NSUInteger {
     /* colors */
     UIColor * _cellColor;
     UIColor * _tableColor;
+    
+    BOOL _setup;
+    
+    NSDictionary * _stringsForTypes;
 }
 
 - (void)viewDidLoad {
@@ -64,6 +68,8 @@ typedef enum : NSUInteger {
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Coupon"];
     self.tableView.separatorColor = [UIColor clearColor];
+    
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"PaddingCell"];
     
     UINib * couponTemplate2Nib = [UINib nibWithNibName:@"CouponTemplate2" bundle:[NSBundle mainBundle]];
     [self.tableView registerNib:couponTemplate2Nib forCellReuseIdentifier:@"CouponTemplate2"];
@@ -90,8 +96,10 @@ typedef enum : NSUInteger {
             //do stuff that prevents user from using app
         }
         else{
+            //rest of init code
             _locationHandler.mainViewController = self;
             [_locationHandler startTrackingLocation];
+            _fetchingCouponsSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
         }
         
         //setup table look
@@ -107,12 +115,14 @@ typedef enum : NSUInteger {
         //create coupon store
         _couponStore = [CouponStore sharedInstance];
         
+        _stringsForTypes = @{
+                             @"pizza" : @[@"pizza_background.jpg"],
+                             @"sushi" : @[@"sushi_background.jpg"]
+                             };
         
         //setup readmore values
         _readMoreIndex = -1;
         _isReadMoreSelected = NO;
-        
-        
         
     }
     return self;
@@ -120,20 +130,107 @@ typedef enum : NSUInteger {
 
 -(void) setup{
     NSLog(@"setup called");
-    //get coupons from server
-    [_couponStore getCouponsFromServer];
-//    for (int i = 0; i < 3; i++){
-//        Coupon * createdCoupon = [_couponStore createCoupon];
-//        //            NSLog(@"%@", createdCoupon);
-//    }
-    for (int i = 0; i < 3; i++){
-        [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
+    if (!_setup){
+        _setup = YES;
+        //get coupons from server
+    //    for (int i = 0; i < 3; i++){
+    //        Coupon * createdCoupon = [_couponStore createCoupon];
+    //        //            NSLog(@"%@", createdCoupon);
+    //    }
+        for (int i = 0; i < 3; i++){
+            [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
+        }
+        for (int i = 0; i < 3; i++){
+            [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
+        }
+        [self.tableView reloadData];
     }
-    for (int i = 0; i < 3; i++){
-        [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
-    }
-    [self.tableView reloadData];
 }
+
+
+/*******************************************************************/
+
+#pragma mark - Fetching coupons from server methods
+
+-(void) getCouponsFromServer{
+    
+    if (!_locationHandler.currentUserLocation){
+        NSLog(@"error - current user location not set. cannot get coupons from server");
+        return;
+    }
+    
+    NSMutableURLRequest * request = [[NSMutableURLRequest alloc]init];
+    NSURL * requestURL = [self urlFromString:@"coupons/getCoupons"];
+    [request setURL:requestURL];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+
+    CGFloat latitude = _locationHandler.currentUserLocation.coordinate.latitude;
+    CGFloat longitude = _locationHandler.currentUserLocation.coordinate.longitude;
+    
+    NSString * dataToSend = [NSString stringWithFormat:@"latitude=%f&longitude=%f&numResultsRequested=20", latitude, longitude];
+    
+    [request setHTTPBody:[dataToSend dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    
+    NSLog(@"%@", [[request URL]absoluteString]);
+    
+    [[_fetchingCouponsSession dataTaskWithRequest:request completionHandler:^(NSData * data, NSURLResponse * response, NSError * error){
+        if (! error){
+            NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
+            //if response returned with a status code of success
+            if ([httpResponse statusCode] >= 200 && [httpResponse statusCode] < 400){
+                //convert data received to json
+                NSLog(@"Request successful. Data returned:");
+                NSLog(@"%@", [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+                NSLog(@"converting data to json dictionary");
+                
+                NSError * serializeError = nil;
+                NSDictionary * jsonData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&serializeError];
+                
+                //if data successfully converted to json
+                if (!error){
+                    //you now have access to coupons
+                    NSLog(@"Successfully converted data to json dictionary.");
+                    NSLog(@"%@", jsonData);
+                    
+                    //do stuff to turn coupon data into actual coupons in array
+                    
+                    //then reload the data in the main tableview
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        NSLog(@"reloading data");
+                        [self.tableView reloadData];
+                    });
+                }
+                
+                //else there was an error converting to json
+                else{
+                    NSLog(@"error converting to json dict - %@", serializeError.description);
+                }
+            }
+            
+            //else response returned with an unsuccessful status code
+            else{
+                NSLog(@"Response returned with unsuccessful status code.");
+            }
+        }
+        
+        //else error with making request
+        else{
+            NSLog(@"%@", [error description]);
+        }
+    }] resume];
+}
+
+-(NSURL *) urlFromString:(NSString *) url{
+    NSString * requestURL = [SERVER_DOMAIN stringByAppendingString:url];
+    NSURL * ans = [NSURL URLWithString:requestURL];
+    return ans;
+}
+
+
+
 
 
 
@@ -143,11 +240,7 @@ typedef enum : NSUInteger {
 }
 
 
--(long) correctCouponIndexForIndexPath:(NSIndexPath *) indexPath{
-    if (indexPath.row > _readMoreIndex && _isReadMoreSelected)
-        return indexPath.row - 1;
-    else return indexPath.row;
-}
+/***********************************************************************/
 
 #pragma mark -  Custom methods for table view UI
 
@@ -155,7 +248,6 @@ typedef enum : NSUInteger {
     
     // Get the subviews of the view
     NSArray *subviews = [view subviews];
-    
     // Return if there are no subviews
     if ([subviews count] == 0) return; // COUNT CHECK LINE
     
@@ -170,14 +262,21 @@ typedef enum : NSUInteger {
     NSLog(@"-------------");
 }
 
+
+-(long) correctCouponIndexForIndexPath:(NSIndexPath *) indexPath{
+    if (indexPath.row > _readMoreIndex && _isReadMoreSelected)
+        return indexPath.row - 1 - 1;//-1 for readmore cell, -1 for padding cell on top
+    else return indexPath.row - 1; //-1 for top cell padding
+}
+
 -(void) removeReadMoreView{
     //first set _isReadMoreSelected to false so that when deleting rows the table cell count is adjusted
     _isReadMoreSelected = NO;
     
     NSIndexPath * path = [NSIndexPath indexPathForRow:_readMoreIndex inSection:0];
-    UITableViewCell * readMoreCell = [self.tableView cellForRowAtIndexPath:path];
-    [[readMoreCell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
-    [self.tableView deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
+//    UITableViewCell * readMoreCell = [self.tableView cellForRowAtIndexPath:path];
+//    [[readMoreCell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
+    [self.tableView deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
     _currSelectedCoupon.selectedForReadMore = NO;
     _currSelectedCoupon = nil;
     _readMoreIndex = -1;
@@ -197,13 +296,15 @@ typedef enum : NSUInteger {
     
 }
 
+/***********************************************************************/
+
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
     if (_isReadMoreSelected)
-        return [[_couponStore allCoupons] count] + 1;
-    else return [[_couponStore allCoupons] count];
+        return [[_couponStore allCoupons] count] + 1 + 1;// +1 for readmore, +1 for top cell padding
+    else return [[_couponStore allCoupons] count] + 1; // +1 for top cell padding;
 }
 
 -(CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -211,58 +312,32 @@ typedef enum : NSUInteger {
     //if it is, return the standard height of a coupon read more box
     //else return the height of the coupon image view frame
     
-    if (indexPath.row == _readMoreIndex && _isReadMoreSelected){
-//        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
+    if (indexPath.row == 0 && indexPath.section == 0){
+        return FIRST_CELL_PADDING_TOP;
+    }
+    
+    else if (indexPath.row == _readMoreIndex && _isReadMoreSelected){
         return READMORE_HEIGHT;
     }
     else{
-//        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
-//        Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
-        return COUPON_HEIGHT;
+        return [CouponDisplayCell heightOfCells];
     }
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    //get cell to reuse
-//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Coupon" forIndexPath:indexPath];
-//    
-//    //style cell
-//    cell.backgroundColor = _cellColor;
-//    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//    
-//    /* clean cell before using */
-//    UIView * oldImageView = [cell.contentView viewWithTag:TAG_TYPE_IMAGE_VIEW];
-////    oldImageView.center = CGPointMake(0,0);
-//    [oldImageView removeFromSuperview];
-//    [[cell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
-//
-//
-//    /* if the path of the cell that is to be displayed is a readmore view */
-//    if (_isReadMoreSelected && indexPath.row == _readMoreIndex){
-//        /* get correct coupon */
-//        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
-//        /* add readmore view */
-//        }
-//    
-//    /* else you're displaying a coupon */
-//    else{
-//        /* get correct index of the coupon in the couponstore array */
-//        long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
-//        Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
-//        
-//        /* add coupon imageview */
-//        coupon.couponImageView.tag = TAG_TYPE_IMAGE_VIEW;
-//        coupon.couponImageView.center = CGPointMake(cell.contentView.bounds.size.width/2,cell.contentView.bounds.size.height/2 + PADDING_BETWEEN_CELL_BORDER_AND_IMAGE_VIEW);
-//        [cell.contentView addSubview:coupon.couponImageView];
-//        //****** add uitableviewcell extension to enable a coupon property (?)
-//    }
-//    return cell;
+
+    if (indexPath.row == 0 && indexPath.section == 0){
+        UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"PaddingCell" forIndexPath:indexPath];
+        cell.backgroundColor = [UIColor clearColor];
+        return cell;
+    }
     
-    if (_isReadMoreSelected && indexPath.row == _readMoreIndex){
+    else if (_isReadMoreSelected && indexPath.row == _readMoreIndex){
         ReadMoreDisplayCell * cell = [tableView dequeueReusableCellWithIdentifier:@"ReadMoreDisplayCell" forIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
         
+        [self roundCellCorners:cell];
         return cell;
 
     }
@@ -272,24 +347,17 @@ typedef enum : NSUInteger {
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
 
         CouponDisplayCell * cell = [tableView dequeueReusableCellWithIdentifier:@"CouponTemplate2" forIndexPath:indexPath];
-        CGRect newFrame = cell.frame;
-        newFrame.size.height = COUPON_HEIGHT - PADDING_BETWEEN_CELLS;
-//        cell.frame = newFrame;
-        [cell setFrame:newFrame];
         
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
+        //set data of cell to coupon data
         cell.discountLabel.text = coupon.discountString;
         cell.onObjectLabel.text = coupon.onObjectString;
-        
-        CALayer * l = [cell layer];
-        [l setMasksToBounds:YES];
-        [l setCornerRadius:10.0];
-        [l setBorderWidth:1.0];
-        [l setBorderColor:[[UIColor grayColor] CGColor]];
 
+        //style cell
+        [self roundCellCorners:cell];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        UIImageView * xibBackgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"pizza_background.jpg"]];
+        //add background image to cell
+        UIImageView * xibBackgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:coupon.imageString]];
         xibBackgroundView.alpha = .5f;
         
         cell.backgroundView = xibBackgroundView;
@@ -297,13 +365,19 @@ typedef enum : NSUInteger {
     }
 }
 
+-(UITableViewCell *)roundCellCorners:(UITableViewCell *)cell{
+    CALayer * l = [cell layer];
+    [l setMasksToBounds:YES];
+    [l setCornerRadius:10.0];
+    [l setBorderWidth:1.0];
+    [l setBorderColor:[[UIColor grayColor] CGColor]];
+    return cell;
+}
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSLog(@"touched coupon at index path: %ld", (long)indexPath.row);
     //
     UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
-    CGRect newFrame = cell.frame;
-//    newFrame.size.height -= 0;
-    cell.frame = newFrame;
     
     //    cell.backgroundColor = [UIColor blackColor];
     
@@ -334,6 +408,7 @@ typedef enum : NSUInteger {
     
 }
 
+/***********************************************************************/
 
 #pragma mark - Location
 
@@ -351,6 +426,8 @@ typedef enum : NSUInteger {
     }
 }
 
+
+/***********************************************************************/
 
 #pragma mark - Alerts for Location
 

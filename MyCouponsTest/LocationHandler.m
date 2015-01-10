@@ -38,6 +38,7 @@ static LocationHandler * locationHandler = nil;
             _locationManager.delegate = self;
             _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
             _locationManager.distanceFilter = DISTANCE_FILTER;
+            self.currentUserLocation = nil;
         }
         else self = nil;
     }
@@ -50,7 +51,13 @@ static LocationHandler * locationHandler = nil;
 
 -(void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
     NSLog(@"%@", locations);
+    CLLocation * previousUserLocation = self.currentUserLocation;
     self.currentUserLocation = [locations lastObject];
+
+    if (!previousUserLocation){
+        [self.mainViewController getCouponsFromServer];
+    }
+    
 }
 
 

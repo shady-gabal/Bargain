@@ -14,4 +14,5 @@
 @property (nonatomic) IBOutlet UILabel * onObjectLabel;
 @property (nonatomic) IBOutlet UIImageView * backgroundView;
 
++(CGFloat) heightOfCells;
 @end

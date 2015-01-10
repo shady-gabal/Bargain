@@ -25,7 +25,11 @@
     [self.window makeKeyAndVisible];
     
     self.tableController = [[MainTableViewController alloc]init];
-    self.window.rootViewController = self.tableController;
+    UITabBarController * tabBarController = [[UITabBarController alloc]init];
+    tabBarController.viewControllers = @[self.tableController];
+    tabBarController.tabBar.frame = CGRectMake(0, 0, 320, 70);
+    
+    self.window.rootViewController = tabBarController;
     
     return YES;
 }

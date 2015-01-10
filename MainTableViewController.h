@@ -15,4 +15,6 @@
 @property (nonatomic, assign) BOOL usingLocation;
 -(void) userDeniedLocation;
 -(void) setup;
+-(void) getCouponsFromServer;
+
 @end
