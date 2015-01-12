@@ -50,13 +50,15 @@ static LocationHandler * locationHandler = nil;
 }
 
 -(void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
-    NSLog(@"%@", locations);
+//    NSLog(@"%@", locations);
     CLLocation * previousUserLocation = self.currentUserLocation;
+//    NSLog(@"%@", previousUserLocation);
     self.currentUserLocation = [locations lastObject];
 
     if (!previousUserLocation){
         [self.mainViewController getCouponsFromServer];
     }
+    else NSLog(@"%@", previousUserLocation);
     
 }
 

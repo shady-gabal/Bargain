@@ -23,10 +23,14 @@
  1) Only pulling coupons near someone - send in JSON request lat and long coordinates
  2) Constantly check if coordinates user is at have a merchant near them with a popular coupon
  
+ 
+ Todo:
+ 1) turn it from tableview based on rows to tableview based on only sections
  */
 
 static float READMORE_HEIGHT = 300.f;
 static float FIRST_CELL_PADDING_TOP = 58.f;
+static int PADDING_CELL_INCLUSION = 1;
 
 static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
@@ -137,13 +141,13 @@ typedef enum : NSUInteger {
     //        Coupon * createdCoupon = [_couponStore createCoupon];
     //        //            NSLog(@"%@", createdCoupon);
     //    }
-        for (int i = 0; i < 3; i++){
-            [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
-        }
-        for (int i = 0; i < 3; i++){
-            [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
-        }
-        [self.tableView reloadData];
+//        for (int i = 0; i < 3; i++){
+//            [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
+//        }
+//        for (int i = 0; i < 3; i++){
+//            [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
+//        }
+//        [self.tableView reloadData];
     }
 }
 
@@ -169,6 +173,8 @@ typedef enum : NSUInteger {
     CGFloat latitude = _locationHandler.currentUserLocation.coordinate.latitude;
     CGFloat longitude = _locationHandler.currentUserLocation.coordinate.longitude;
     
+    NSLog(@"trying to make request. %f, %f", latitude, longitude);
+    
     NSString * dataToSend = [NSString stringWithFormat:@"latitude=%f&longitude=%f&numResultsRequested=20", latitude, longitude];
     
     [request setHTTPBody:[dataToSend dataUsingEncoding:NSUTF8StringEncoding]];
@@ -187,14 +193,17 @@ typedef enum : NSUInteger {
                 NSLog(@"converting data to json dictionary");
                 
                 NSError * serializeError = nil;
-                NSDictionary * jsonData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&serializeError];
+                NSDictionary * couponData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&serializeError];
                 
                 //if data successfully converted to json
                 if (!error){
                     //you now have access to coupons
                     NSLog(@"Successfully converted data to json dictionary.");
-                    NSLog(@"%@", jsonData);
                     
+                    for(id coupon in couponData){
+                        NSLog(@"%@", coupon);
+                        Coupon * newCoupon = [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:coupon[@"description"] withOnObjectText:coupon[@"created_at"]];
+                    }
                     //do stuff to turn coupon data into actual coupons in array
                     
                     //then reload the data in the main tableview
@@ -303,8 +312,8 @@ typedef enum : NSUInteger {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
     if (_isReadMoreSelected)
-        return [[_couponStore allCoupons] count] + 1 + 1;// +1 for readmore, +1 for top cell padding
-    else return [[_couponStore allCoupons] count] + 1; // +1 for top cell padding;
+        return [[_couponStore allCoupons] count] + 1 + PADDING_CELL_INCLUSION;// +1 for readmore, +1 for top cell padding
+    else return [[_couponStore allCoupons] count] + PADDING_CELL_INCLUSION; // +1 for top cell padding;
 }
 
 -(CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -335,7 +344,7 @@ typedef enum : NSUInteger {
     
     else if (_isReadMoreSelected && indexPath.row == _readMoreIndex){
         ReadMoreDisplayCell * cell = [tableView dequeueReusableCellWithIdentifier:@"ReadMoreDisplayCell" forIndexPath:indexPath];
-        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1];
+        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1 - PADDING_CELL_INCLUSION];
         
         [self roundCellCorners:cell];
         return cell;
@@ -381,6 +390,7 @@ typedef enum : NSUInteger {
     
     //    cell.backgroundColor = [UIColor blackColor];
     
+    //if selecting coupon
     if (indexPath.row != _readMoreIndex || ! _isReadMoreSelected){
         long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
@@ -395,15 +405,21 @@ typedef enum : NSUInteger {
         else{
             
             if (_isReadMoreSelected){
-                if (_readMoreIndex < indexPath.row)
-                    indexPath = [NSIndexPath indexPathForRow:indexPath.row-1 inSection:indexPath.section];
-                [self removeReadMoreView];
+                if (_readMoreIndex < indexPath.row) //if readmore is before coupon selected
+                    indexPath = [NSIndexPath indexPathForRow:indexPath.row-1 inSection:indexPath.section];//subtract one from index so that the indeces of all coupons is now in order
+                [self removeReadMoreView]; //remove the current readmore view
                 
             }
             
             NSLog(@"coupon selected");
-            [self insertReadMoreViewForCoupon:coupon atIndexPath:indexPath];
+            [self insertReadMoreViewForCoupon:coupon atIndexPath:indexPath]; //add new readmore view
         }
+        
+    }
+    
+    //selecting readmore
+    else{
+        
     }
     
 }
