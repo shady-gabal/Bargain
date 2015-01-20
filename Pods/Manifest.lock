@@ -1,0 +1,10 @@
+PODS:
+  - MONActivityIndicatorView (0.0.1)
+
+DEPENDENCIES:
+  - MONActivityIndicatorView
+
+SPEC CHECKSUMS:
+  MONActivityIndicatorView: 728965121e59cef32c1bc4676f6868e35f3c8c61
+
+COCOAPODS: 0.34.2

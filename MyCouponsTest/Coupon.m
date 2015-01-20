@@ -13,10 +13,10 @@
 
 
 -(instancetype) init{
-    return [[Coupon alloc]initWithImageNamed:@"1"];
+    return [[Coupon alloc]initWithImageNamed:@"coupon2"];
 }
 
-
+//
 //-(instancetype) initWithImageNamed:(NSString *) imageName{
 //    self = [super init];
 //    if (self){
@@ -44,7 +44,8 @@
 //    }
 //    return self;
 //}
-//
+
+
 -(instancetype) initWithTemplate:(NSString *) template withImageName:(NSString *)imageName withDiscountText:(NSString *)discountText withOnObjectText:(NSString *)onObjectText{
     self = [super init];
     if (self){

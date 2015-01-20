@@ -33,12 +33,12 @@ static CGFloat DEVICE_HEIGHT = 0.f;
 }
 
 
-- (void)setFrame:(CGRect)frame {
-    frame.size.height = [CouponDisplayCell heightOfCells] - PADDING_BETWEEN_COUPONS;
-    frame.origin.x = COUPON_WIDTH_INSET/2.f;
-    frame.size.width = (self.superview.frame.size.width - COUPON_WIDTH_INSET);
-    [super setFrame:frame];
-}
+//- (void)setFrame:(CGRect)frame {
+//    frame.size.height = [CouponDisplayCell heightOfCells] - PADDING_BETWEEN_COUPONS;
+//    frame.origin.x = COUPON_WIDTH_INSET/2.f;
+//    frame.size.width = (self.superview.frame.size.width - COUPON_WIDTH_INSET);
+//    [super setFrame:frame];
+//}
 
 +(CGFloat) heightOfCells{
     

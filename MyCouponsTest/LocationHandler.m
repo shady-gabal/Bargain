@@ -56,7 +56,7 @@ static LocationHandler * locationHandler = nil;
     self.currentUserLocation = [locations lastObject];
 
     if (!previousUserLocation){
-        [self.mainViewController getCouponsFromServer];
+        [self.mainViewController setup];
     }
     else NSLog(@"%@", previousUserLocation);
     
@@ -76,7 +76,7 @@ static LocationHandler * locationHandler = nil;
     else{
         self.deniedLocationAccess = NO;
         self.mainViewController.usingLocation = YES;
-        [self.mainViewController setup];
+//        [self.mainViewController setup];
         return NO;
     }
 }

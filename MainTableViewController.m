@@ -25,17 +25,29 @@
  
  
  Todo:
- 1) turn it from tableview based on rows to tableview based on only sections
+ 1) Fix up server side coupon db
+ 2) Master fetching from server/reloading from server
+ 3) Implement location
+ 4) Add settings/available coupons
+ 2) coupons/merchants fetching from server securely
+ 
+ 
+ Test Cases:
+ 1) have location enabled, open app, let app get location, keep app in background while turning off location access, reenter app and see what happens
+    if app does not refresh, check [LocationHandler deniedLocationAccess]
+    if app does refresh, make sure it refreshes using new location
  */
 
 static float READMORE_HEIGHT = 300.f;
-static float FIRST_CELL_PADDING_TOP = 58.f;
+static float FIRST_CELL_PADDING_TOP = 40.f;
 static int PADDING_CELL_INCLUSION = 1;
+static float PADDING_BETWEEN_SECTIONS = 15.f;
+static BOOL FETCH_FROM_SERVER = YES;
 
 static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
 
-@interface MainTableViewController ()
+@interface MainTableViewController () <NSURLSessionDataDelegate>
 
 @property (nonatomic) NSURLSession * fetchingCouponsSession;
 
@@ -52,7 +64,7 @@ typedef enum : NSUInteger {
     
     /* for readmore view */
     BOOL _isReadMoreSelected;
-    long _readMoreIndex;
+    long _readMoreSectionNum;
     Coupon * _currSelectedCoupon;
     
     /* for location */
@@ -65,10 +77,13 @@ typedef enum : NSUInteger {
     BOOL _setup;
     
     NSDictionary * _stringsForTypes;
+    
+    UIView * _tableLoadingView;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+//    self.edgesForExtendedLayout = UIRectEdgeBottom;
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Coupon"];
     self.tableView.separatorColor = [UIColor clearColor];
@@ -103,7 +118,7 @@ typedef enum : NSUInteger {
             //rest of init code
             _locationHandler.mainViewController = self;
             [_locationHandler startTrackingLocation];
-            _fetchingCouponsSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+            _fetchingCouponsSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:nil];
         }
         
         //setup table look
@@ -125,7 +140,7 @@ typedef enum : NSUInteger {
                              };
         
         //setup readmore values
-        _readMoreIndex = -1;
+        _readMoreSectionNum = -1;
         _isReadMoreSelected = NO;
         
     }
@@ -136,18 +151,26 @@ typedef enum : NSUInteger {
     NSLog(@"setup called");
     if (!_setup){
         _setup = YES;
-        //get coupons from server
-    //    for (int i = 0; i < 3; i++){
-    //        Coupon * createdCoupon = [_couponStore createCoupon];
-    //        //            NSLog(@"%@", createdCoupon);
-    //    }
-//        for (int i = 0; i < 3; i++){
-//            [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
-//        }
-//        for (int i = 0; i < 3; i++){
-//            [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
-//        }
-//        [self.tableView reloadData];
+        if (FETCH_FROM_SERVER){
+            [self addTableLoadingView];
+            [self getCouponsFromServer];
+        }
+        else{
+            for (int i = 0; i < 3; i++){
+                [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
+            }
+            for (int i = 0; i < 4; i++){
+                [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
+            }
+            for (int i = 0; i < 3; i++){
+                [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:@"$6 OFF" withOnObjectText:@"ONE TOPPING LARGE PIE"];
+            }
+            for (int i = 0; i < 6; i++){
+                [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"sushi_background.jpg" withDiscountText:@"$3 OFF" withOnObjectText:@"PLATE OF SUSHI"];
+            }
+        }
+        
+        [self.tableView reloadData];
     }
 }
 
@@ -209,6 +232,8 @@ typedef enum : NSUInteger {
                     //then reload the data in the main tableview
                     dispatch_async(dispatch_get_main_queue(), ^{
                         NSLog(@"reloading data");
+                        [NSThread sleepForTimeInterval:2.f];
+                        [self removeTableLoadingView];
                         [self.tableView reloadData];
                     });
                 }
@@ -230,6 +255,31 @@ typedef enum : NSUInteger {
             NSLog(@"%@", [error description]);
         }
     }] resume];
+}
+
+-(void) removeTableLoadingView{
+    NSLog(@"removetableloadingview called");
+    if (_tableLoadingView){
+        [_tableLoadingView removeFromSuperview];
+    }
+}
+
+-(void) addTableLoadingView{
+    NSLog(@"addtableloadingview called");
+    
+//    _tableLoadingView = [[[NSBundle mainBundle] loadNibNamed:@"TableLoadingView" owner:self options:nil]objectAtIndex:0];
+    _tableLoadingView = [[UIView alloc]init];
+    MONActivityIndicatorView * activityIndicator = [[MONActivityIndicatorView alloc]init];
+    
+    _tableLoadingView.center = self.tableView.center;
+    [self roundCellCorners:_tableLoadingView];
+    [self.tableView addSubview:_tableLoadingView];
+    
+}
+
+-(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler{
+    NSURLCredential * credentials = [NSURLCredential credentialWithUser:@"shady" password:@"123" persistence:NSURLCredentialPersistenceForSession];
+    completionHandler(NSURLSessionAuthChallengeUseCredential, credentials);
 }
 
 -(NSURL *) urlFromString:(NSString *) url{
@@ -273,33 +323,34 @@ typedef enum : NSUInteger {
 
 
 -(long) correctCouponIndexForIndexPath:(NSIndexPath *) indexPath{
-    if (indexPath.row > _readMoreIndex && _isReadMoreSelected)
-        return indexPath.row - 1 - 1;//-1 for readmore cell, -1 for padding cell on top
-    else return indexPath.row - 1; //-1 for top cell padding
+//    if (indexPath.section > _readMoreSectionNum && _isReadMoreSelected)
+//        return indexPath.section - 1 - 1;//-1 for readmore cell, -1 for padding cell on top
+//    else
+    return indexPath.section - 1; //-1 for top cell padding
 }
 
 -(void) removeReadMoreView{
     //first set _isReadMoreSelected to false so that when deleting rows the table cell count is adjusted
     _isReadMoreSelected = NO;
     
-    NSIndexPath * path = [NSIndexPath indexPathForRow:_readMoreIndex inSection:0];
+    NSIndexPath * path = [NSIndexPath indexPathForRow:1 inSection:_readMoreSectionNum];
 //    UITableViewCell * readMoreCell = [self.tableView cellForRowAtIndexPath:path];
 //    [[readMoreCell.contentView viewWithTag:TAG_TYPE_READ_MORE_VIEW]removeFromSuperview];
     [self.tableView deleteRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
     _currSelectedCoupon.selectedForReadMore = NO;
     _currSelectedCoupon = nil;
-    _readMoreIndex = -1;
+    _readMoreSectionNum = -1;
     
 }
 
 -(void) insertReadMoreViewForCoupon:(Coupon *) coupon atIndexPath:(NSIndexPath *) indexPath{
-    NSLog(@"inserting readmoreview for coupon at index path: %ld", (long)indexPath.row);
+    NSLog(@"inserting readmoreview for coupon at index path: %ld", (long)indexPath.section);
     _currSelectedCoupon = coupon;
     _currSelectedCoupon.selectedForReadMore = YES;
     
-    _readMoreIndex = indexPath.row + 1;
+    _readMoreSectionNum = indexPath.section;
     _isReadMoreSelected = YES;
-    NSIndexPath * path = [NSIndexPath indexPathForRow:indexPath.row+1 inSection:0];
+    NSIndexPath * path = [NSIndexPath indexPathForRow:1 inSection:_readMoreSectionNum];
     [self.tableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     
@@ -310,10 +361,14 @@ typedef enum : NSUInteger {
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    // Return the number of rows in the section.
-    if (_isReadMoreSelected)
-        return [[_couponStore allCoupons] count] + 1 + PADDING_CELL_INCLUSION;// +1 for readmore, +1 for top cell padding
-    else return [[_couponStore allCoupons] count] + PADDING_CELL_INCLUSION; // +1 for top cell padding;
+    if(_isReadMoreSelected && section == _readMoreSectionNum){
+        return 2;
+    }
+    else return 1;
+}
+
+-(NSInteger) numberOfSectionsInTableView:(UITableView *)tableView{
+    return [[_couponStore allCoupons] count] + PADDING_CELL_INCLUSION; // +1 for top cell padding;
 }
 
 -(CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -321,11 +376,11 @@ typedef enum : NSUInteger {
     //if it is, return the standard height of a coupon read more box
     //else return the height of the coupon image view frame
     
-    if (indexPath.row == 0 && indexPath.section == 0){
+    if (indexPath.section == 0 && indexPath.section == 0){
         return FIRST_CELL_PADDING_TOP;
     }
     
-    else if (indexPath.row == _readMoreIndex && _isReadMoreSelected){
+    else if (_isReadMoreSelected && indexPath.section == _readMoreSectionNum && indexPath.row == 1){
         return READMORE_HEIGHT;
     }
     else{
@@ -334,17 +389,46 @@ typedef enum : NSUInteger {
 }
 
 
+-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section{
+    return PADDING_BETWEEN_SECTIONS;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.section == 0 && indexPath.section == 0){
+        return FIRST_CELL_PADDING_TOP;
+    }
+    
+    else if (_isReadMoreSelected && indexPath.section == _readMoreSectionNum && indexPath.row == 1){
+        return READMORE_HEIGHT;
+    }
+    else{
+        return [CouponDisplayCell heightOfCells];
+    }
+    
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return PADDING_BETWEEN_SECTIONS;
+}
+
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    UIView * view = [[UIView alloc]init];
+    view.backgroundColor = [UIColor clearColor];
+    return view;
+}
+
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    if (indexPath.row == 0 && indexPath.section == 0){
+    if (indexPath.section == 0 && indexPath.row == 0){
         UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"PaddingCell" forIndexPath:indexPath];
         cell.backgroundColor = [UIColor clearColor];
         return cell;
     }
     
-    else if (_isReadMoreSelected && indexPath.row == _readMoreIndex){
+    else if (_isReadMoreSelected && indexPath.section == _readMoreSectionNum){
         ReadMoreDisplayCell * cell = [tableView dequeueReusableCellWithIdentifier:@"ReadMoreDisplayCell" forIndexPath:indexPath];
-        Coupon * coupon = [_couponStore allCoupons][indexPath.row - 1 - PADDING_CELL_INCLUSION];
+        Coupon * coupon = [_couponStore allCoupons][indexPath.section - PADDING_CELL_INCLUSION];
         
         [self roundCellCorners:cell];
         return cell;
@@ -374,7 +458,7 @@ typedef enum : NSUInteger {
     }
 }
 
--(UITableViewCell *)roundCellCorners:(UITableViewCell *)cell{
+-(UIView *)roundCellCorners:(UIView *)cell{
     CALayer * l = [cell layer];
     [l setMasksToBounds:YES];
     [l setCornerRadius:10.0];
@@ -384,14 +468,14 @@ typedef enum : NSUInteger {
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"touched coupon at index path: %ld", (long)indexPath.row);
+    NSLog(@"touched coupon at index path: %ld", (long)indexPath.section);
     //
-    UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
+//    UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
+    if (indexPath.row == 0 && indexPath.section == 0) //if selecting padding cell
+        return; //die hacker scum
     
-    //    cell.backgroundColor = [UIColor blackColor];
-    
-    //if selecting coupon
-    if (indexPath.row != _readMoreIndex || ! _isReadMoreSelected){
+    //if selecting coupon that is not selected
+    else if (! _isReadMoreSelected || indexPath.section != _readMoreSectionNum || indexPath.row != 1){
         long correctCouponIndex = [self correctCouponIndexForIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][correctCouponIndex];
         
@@ -405,8 +489,6 @@ typedef enum : NSUInteger {
         else{
             
             if (_isReadMoreSelected){
-                if (_readMoreIndex < indexPath.row) //if readmore is before coupon selected
-                    indexPath = [NSIndexPath indexPathForRow:indexPath.row-1 inSection:indexPath.section];//subtract one from index so that the indeces of all coupons is now in order
                 [self removeReadMoreView]; //remove the current readmore view
                 
             }
@@ -434,7 +516,7 @@ typedef enum : NSUInteger {
 }
 
 -(void) userDeniedLocation{
-    NSLog(@"yo %d", _locationHandler.deniedLocationAccess);
+    NSLog(@"in [tableviewcontroller userDeniedLocation]. _locationHandler.deniedLocationAccess: %d", _locationHandler.deniedLocationAccess);
     if (_locationHandler.deniedLocationAccess && !self.didShowLocationDeniedPopup){
         self.didShowLocationDeniedPopup = YES;
         UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Cannot use app" message:@"We need your location in order to find the coupons closest to you. Without it, this app will not work." delegate:self cancelButtonTitle:@"Fix" otherButtonTitles:nil];

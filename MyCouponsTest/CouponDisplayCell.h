@@ -15,4 +15,5 @@
 @property (nonatomic) IBOutlet UIImageView * backgroundView;
 
 +(CGFloat) heightOfCells;
+
 @end

@@ -28,6 +28,7 @@
     UITabBarController * tabBarController = [[UITabBarController alloc]init];
     tabBarController.viewControllers = @[self.tableController];
     tabBarController.tabBar.frame = CGRectMake(0, 0, 320, 70);
+    tabBarController.tabBar.backgroundColor = [UIColor blackColor];
     
     self.window.rootViewController = tabBarController;
     
