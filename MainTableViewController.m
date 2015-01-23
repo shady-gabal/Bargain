@@ -11,6 +11,7 @@
 #import "LocationHandler.h"
 #import "CouponDisplayCell.h"
 #import "ReadMoreDisplayCell.h"
+#import <MONActivityIndicatorView.h>
 
 /* FEATURES:
  1) Displays all coupons near you sorted by distance and popularity pulled from online database
@@ -24,12 +25,9 @@
  2) Constantly check if coordinates user is at have a merchant near them with a popular coupon
  
  
- Todo:
- 1) Fix up server side coupon db
- 2) Master fetching from server/reloading from server
- 3) Implement location
- 4) Add settings/available coupons
- 2) coupons/merchants fetching from server securely
+ Steps:
+ 1) Add facebook/user identification
+ 2) Figure out how to generate unique ids 
  
  
  Test Cases:
@@ -42,12 +40,17 @@ static float READMORE_HEIGHT = 300.f;
 static float FIRST_CELL_PADDING_TOP = 40.f;
 static int PADDING_CELL_INCLUSION = 1;
 static float PADDING_BETWEEN_SECTIONS = 15.f;
+
 static BOOL FETCH_FROM_SERVER = YES;
+
+static int NUM_COUPONS_TO_LOAD_PER_REQ = 15;
+static int NUM_COUPONS_ALREADY_LOADED = 0;
+
 
 static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
 
-@interface MainTableViewController () <NSURLSessionDataDelegate>
+@interface MainTableViewController () <NSURLSessionDataDelegate, MONActivityIndicatorViewDelegate>
 
 @property (nonatomic) NSURLSession * fetchingCouponsSession;
 
@@ -198,7 +201,7 @@ typedef enum : NSUInteger {
     
     NSLog(@"trying to make request. %f, %f", latitude, longitude);
     
-    NSString * dataToSend = [NSString stringWithFormat:@"latitude=%f&longitude=%f&numResultsRequested=20", latitude, longitude];
+    NSString * dataToSend = [NSString stringWithFormat:@"latitude=%f&longitude=%f&numResultsRequested=%d&startfrom=%d", latitude, longitude, NUM_COUPONS_TO_LOAD_PER_REQ, NUM_COUPONS_ALREADY_LOADED];
     
     [request setHTTPBody:[dataToSend dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -226,13 +229,14 @@ typedef enum : NSUInteger {
                     for(id coupon in couponData){
                         NSLog(@"%@", coupon);
                         Coupon * newCoupon = [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:coupon[@"description"] withOnObjectText:coupon[@"created_at"]];
+                        NUM_COUPONS_ALREADY_LOADED++;
                     }
                     //do stuff to turn coupon data into actual coupons in array
                     
                     //then reload the data in the main tableview
                     dispatch_async(dispatch_get_main_queue(), ^{
                         NSLog(@"reloading data");
-                        [NSThread sleepForTimeInterval:2.f];
+//                        [NSThread sleepForTimeInterval:10.f];
                         [self removeTableLoadingView];
                         [self.tableView reloadData];
                     });
@@ -267,13 +271,57 @@ typedef enum : NSUInteger {
 -(void) addTableLoadingView{
     NSLog(@"addtableloadingview called");
     
-//    _tableLoadingView = [[[NSBundle mainBundle] loadNibNamed:@"TableLoadingView" owner:self options:nil]objectAtIndex:0];
-    _tableLoadingView = [[UIView alloc]init];
+    _tableLoadingView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 300, 200)];
+    
     MONActivityIndicatorView * activityIndicator = [[MONActivityIndicatorView alloc]init];
+    activityIndicator.center = CGPointApplyAffineTransform(_tableLoadingView.center, CGAffineTransformMakeTranslation(0, -20));
+;
+    activityIndicator.delegate = self;
+    [activityIndicator startAnimating];
+    [_tableLoadingView addSubview:activityIndicator];
+    
+    UILabel * label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 150, 50)];
+    label.textColor = [UIColor whiteColor];
+    
+    label.text = @"Fetching you savings...";
+    label.numberOfLines = 0;
+    label.textAlignment = NSTextAlignmentCenter;
+    NSLog(@"%@",[UIFont fontNamesForFamilyName:@"Gotham"]);
+    label.font = [UIFont fontWithName:@"Gotham-Light" size:14];
+    [_tableLoadingView addSubview:label];
+    label.center = CGPointApplyAffineTransform(_tableLoadingView.center, CGAffineTransformMakeTranslation(0, 20));
+    _tableLoadingView.backgroundColor = [UIColor clearColor];
     
     _tableLoadingView.center = self.tableView.center;
-    [self roundCellCorners:_tableLoadingView];
     [self.tableView addSubview:_tableLoadingView];
+    
+}
+
+/* FOR LOADING CIRCLES ANIMATION */
+
+-(UIColor *)activityIndicatorView:(MONActivityIndicatorView *)activityIndicatorView circleBackgroundColorAtIndex:(NSUInteger)index{
+    switch(index){
+        case 0:
+            return [UIColor greenColor];
+            break;
+        case 1:
+            return [UIColor blueColor];
+            break;
+        case 2:
+            return [UIColor purpleColor];
+            break;
+        case 3:
+            return [UIColor brownColor];
+            break;
+        case 4:
+            return [UIColor redColor];
+            break;
+        //will need more if adding more circles, less if subtracting circles
+        default:
+            return [UIColor whiteColor];
+            break;
+    }
+    return nil;
     
 }
 
@@ -287,11 +335,6 @@ typedef enum : NSUInteger {
     NSURL * ans = [NSURL URLWithString:requestURL];
     return ans;
 }
-
-
-
-
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -415,6 +458,13 @@ typedef enum : NSUInteger {
     UIView * view = [[UIView alloc]init];
     view.backgroundColor = [UIColor clearColor];
     return view;
+}
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.section == [[_couponStore allCoupons]count] - 1 + PADDING_CELL_INCLUSION && NUM_COUPONS_ALREADY_LOADED != 0){
+        NSLog(@"should reload now");
+        [self getCouponsFromServer];
+    }
 }
 
 

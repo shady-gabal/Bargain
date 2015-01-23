@@ -12,6 +12,8 @@
 @implementation LocationHandler
 
 static CGFloat DISTANCE_FILTER = 100.f;
+
+
 static LocationHandler * locationHandler = nil;
 
 +(instancetype) sharedInstance{

@@ -23,11 +23,11 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-    
+        
     self.tableController = [[MainTableViewController alloc]init];
     UITabBarController * tabBarController = [[UITabBarController alloc]init];
     tabBarController.viewControllers = @[self.tableController];
-    tabBarController.tabBar.frame = CGRectMake(0, 0, 320, 70);
+    tabBarController.tabBar.frame = CGRectMake(0, [UIApplication sharedApplication].statusBarFrame.size.height, 320, 70);
     tabBarController.tabBar.backgroundColor = [UIColor blackColor];
     
     self.window.rootViewController = tabBarController;

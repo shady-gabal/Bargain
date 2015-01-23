@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Coupon.h"
 
 @interface ReadMoreDisplayCell : UITableViewCell
+
+@property (nonatomic) Coupon * coupon;
 
 @end
