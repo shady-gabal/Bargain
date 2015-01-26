@@ -12,6 +12,7 @@
 #import "CouponDisplayCell.h"
 #import "ReadMoreDisplayCell.h"
 #import <MONActivityIndicatorView.h>
+#import <FacebookSDK/FacebookSDK.h>
 
 /* FEATURES:
  1) Displays all coupons near you sorted by distance and popularity pulled from online database
@@ -26,7 +27,6 @@
  
  
  Steps:
- 1) Add facebook/user identification
  2) Figure out how to generate unique ids 
  
  
@@ -50,7 +50,7 @@ static int NUM_COUPONS_ALREADY_LOADED = 0;
 static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
 
-@interface MainTableViewController () <NSURLSessionDataDelegate, MONActivityIndicatorViewDelegate>
+@interface MainTableViewController () <NSURLSessionDataDelegate, MONActivityIndicatorViewDelegate, FBLoginViewDelegate>
 
 @property (nonatomic) NSURLSession * fetchingCouponsSession;
 
@@ -82,6 +82,8 @@ typedef enum : NSUInteger {
     NSDictionary * _stringsForTypes;
     
     UIView * _tableLoadingView;
+    
+    FBLoginView * _fbLoginView;
 }
 
 - (void)viewDidLoad {
@@ -98,6 +100,10 @@ typedef enum : NSUInteger {
     
     UINib * readMoreViewNib = [UINib nibWithNibName:@"ReadMoreDisplayCell" bundle:[NSBundle mainBundle]];
     [self.tableView registerNib:readMoreViewNib forCellReuseIdentifier:@"ReadMoreDisplayCell"];
+
+    if (!_loggedIn){
+        
+    }
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -105,6 +111,7 @@ typedef enum : NSUInteger {
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
+
 
 
 
@@ -151,8 +158,8 @@ typedef enum : NSUInteger {
 }
 
 -(void) setup{
-    NSLog(@"setup called");
-    if (!_setup){
+    if (!_setup && _locationHandler.currentUserLocation){
+        NSLog(@"setting up");
         _setup = YES;
         if (FETCH_FROM_SERVER){
             [self addTableLoadingView];

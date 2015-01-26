@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "97AE74331A1BCF9D00FE6FAB"
-               BuildableName = "MyCouponsTest.app"
-               BlueprintName = "MyCouponsTest"
-               ReferencedContainer = "container:MyCouponsTest.xcodeproj">
+               BuildableName = "Bargain.app"
+               BlueprintName = "Bargain"
+               ReferencedContainer = "container:Bargain.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "97AE744C1A1BCF9D00FE6FAB"
-               BuildableName = "MyCouponsTestTests.xctest"
-               BlueprintName = "MyCouponsTestTests"
-               ReferencedContainer = "container:MyCouponsTest.xcodeproj">
+               BuildableName = "BargainTests.xctest"
+               BlueprintName = "BargainTests"
+               ReferencedContainer = "container:Bargain.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "97AE744C1A1BCF9D00FE6FAB"
-               BuildableName = "MyCouponsTestTests.xctest"
-               BlueprintName = "MyCouponsTestTests"
-               ReferencedContainer = "container:MyCouponsTest.xcodeproj">
+               BuildableName = "BargainTests.xctest"
+               BlueprintName = "BargainTests"
+               ReferencedContainer = "container:Bargain.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "97AE74331A1BCF9D00FE6FAB"
-            BuildableName = "MyCouponsTest.app"
-            BlueprintName = "MyCouponsTest"
-            ReferencedContainer = "container:MyCouponsTest.xcodeproj">
+            BuildableName = "Bargain.app"
+            BlueprintName = "Bargain"
+            ReferencedContainer = "container:Bargain.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -76,9 +76,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "97AE74331A1BCF9D00FE6FAB"
-            BuildableName = "MyCouponsTest.app"
-            BlueprintName = "MyCouponsTest"
-            ReferencedContainer = "container:MyCouponsTest.xcodeproj">
+            BuildableName = "Bargain.app"
+            BlueprintName = "Bargain"
+            ReferencedContainer = "container:Bargain.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -94,9 +94,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "97AE74331A1BCF9D00FE6FAB"
-            BuildableName = "MyCouponsTest.app"
-            BlueprintName = "MyCouponsTest"
-            ReferencedContainer = "container:MyCouponsTest.xcodeproj">
+            BuildableName = "Bargain.app"
+            BlueprintName = "Bargain"
+            ReferencedContainer = "container:Bargain.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

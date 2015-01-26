@@ -14,6 +14,7 @@
 
 @property (nonatomic, assign) BOOL didShowLocationDeniedPopup;
 @property (nonatomic, assign) BOOL usingLocation;
+@property (nonatomic, assign) BOOL loggedIn;
 -(void) userDeniedLocation;
 -(void) setup;
 -(void) getCouponsFromServer;

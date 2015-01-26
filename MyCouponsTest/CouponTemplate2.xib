@@ -21,11 +21,11 @@
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="JDH-OK-v9L" id="Du9-hP-t0j">
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="o6W-DG-bv7">
-                        <rect key="frame" x="8" y="8" width="390" height="118"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o6W-DG-bv7">
+                        <rect key="frame" x="8" y="9" width="390" height="118"/>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10% OFF" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LVl-gt-QEv">
-                        <rect key="frame" x="78" y="39" width="250" height="38"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="10% OFF" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LVl-gt-QEv">
+                        <rect key="frame" x="78" y="40" width="250" height="38"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="250" id="pMu-zJ-Ngl"/>
                         </constraints>
@@ -34,11 +34,14 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="A LARGE PIE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wWh-0f-ga9">
-                        <rect key="frame" x="135" y="79" width="137" height="12"/>
+                        <rect key="frame" x="135" y="80" width="137" height="12"/>
                         <fontDescription key="fontDescription" name="Gotham-Book" family="Gotham" pointSize="12"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="coupon_cut_out.png" translatesAutoresizingMaskIntoConstraints="NO" id="Thy-PV-gyT">
+                        <rect key="frame" x="13" y="14" width="379" height="109"/>
+                    </imageView>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="centerX" secondItem="LVl-gt-QEv" secondAttribute="centerX" constant="-0.5" id="7O6-4B-cVe"/>
@@ -56,7 +59,10 @@
                 <outlet property="discountLabel" destination="LVl-gt-QEv" id="SXi-OM-wUX"/>
                 <outlet property="onObjectLabel" destination="wWh-0f-ga9" id="ZGF-5o-X2t"/>
             </connections>
-            <point key="canvasLocation" x="365" y="44.5"/>
+            <point key="canvasLocation" x="365" y="40.5"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="coupon_cut_out.png" width="500" height="300"/>
+    </resources>
 </document>
