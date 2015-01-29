@@ -20,6 +20,11 @@
     // Configure the view for the selected state
 }
 
+-(IBAction)redeemCoupon:(id) sender{
+    NSLog(@"redeem coupon called for coupon: %@", [self.coupon description]);
+    [self.mainTableController redeemCoupon:self.coupon];
+}
+
 //- (void)setFrame:(CGRect)frame {
 //    //    frame.origin.y += 4;
 //    frame.size.height -= 2 * 2;

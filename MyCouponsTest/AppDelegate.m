@@ -27,16 +27,8 @@
     [self.window makeKeyAndVisible];
 
     // Whenever a person opens the app, check for a cached session
-    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
-        self.tableController = [[MainTableViewController alloc]init];
-        self.tableController.loggedIn = YES;
-        UITabBarController * tabBarController = [[UITabBarController alloc]init];
-        tabBarController.viewControllers = @[self.tableController];
-        tabBarController.tabBar.frame = CGRectMake(0, [UIApplication sharedApplication].statusBarFrame.size.height, 320, 70);
-        tabBarController.tabBar.backgroundColor = [UIColor blackColor];
+    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) { //FBSession.activeSession.isOpen
         
-        self.window.rootViewController = tabBarController;
-
         // If there's one, just open the session silently, without showing the user the login UI
         [FBSession openActiveSessionWithReadPermissions:@[@"public_profile"]
                                            allowLoginUI:NO
@@ -46,6 +38,19 @@
                                           // also for intermediate states and NOT just when the session open
                                           [self sessionStateChanged:session state:state error:error];
                                       }];
+        
+
+        
+        self.tableController = [[MainTableViewController alloc]init];
+        self.tableController.loggedIn = YES;
+        UITabBarController * tabBarController = [[UITabBarController alloc]init];
+        tabBarController.viewControllers = @[self.tableController];
+        tabBarController.tabBar.frame = CGRectMake(0, [UIApplication sharedApplication].statusBarFrame.size.height, 320, 70);
+        tabBarController.tabBar.backgroundColor = [UIColor blackColor];
+        
+        self.window.rootViewController = tabBarController;
+        NSLog(@"loaded");
+
     }
         
     // Override point for customization after application launch.
@@ -58,14 +63,11 @@
 }
 
 -(void) userLoggedIn{
+    
+
     if (!self.tableController){
-        
-        if (self.fbLoginController){
-            [self.fbLoginController removeFromParentViewController];
-        }
-        
+ 
         self.tableController = [[MainTableViewController alloc]init];
-    //    self.tableController.loggedIn = YES;
         UITabBarController * tabBarController = [[UITabBarController alloc]init];
         tabBarController.viewControllers = @[self.tableController];
         tabBarController.tabBar.frame = CGRectMake(0, [UIApplication sharedApplication].statusBarFrame.size.height, 320, 70);
@@ -73,6 +75,29 @@
         
         self.window.rootViewController = tabBarController;
     }
+    
+    if (self.fbLoginController){
+        [self.fbLoginController removeFromParentViewController];
+    }
+    
+    //get current fb user
+    [[FBRequest requestForMe] startWithCompletionHandler:
+     ^(FBRequestConnection *connection,
+       NSDictionary<FBGraphUser> *user,
+       NSError *error) {
+         if (!error) {
+             NSString *firstName = user.first_name;
+             NSString *lastName = user.last_name;
+             NSString *facebookId = user.objectID;
+             NSString *email = [user objectForKey:@"email"];
+             NSString *imageUrl = [[NSString alloc] initWithFormat: @"http://graph.facebook.com/%@/picture?type=large", facebookId];
+             
+             NSLog(@"Facebook user %@ %@ has id %@", firstName, lastName, facebookId);
+             self.tableController.currentUserFB = user;
+         }
+     }];
+    
+
 }
 
 -(void) userLoggedOut{

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5DDAF0D36FD8ADBF6F702C96 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF2E443D0A85ED2214E8995 /* libPods.a */; };
+		9727221C1A780B6500C94F3D /* RequestMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 9727221B1A780B6500C94F3D /* RequestMaker.m */; };
 		9733F2E81A59DF680017EB22 /* Gotham-Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9733F2E41A59DF680017EB22 /* Gotham-Book.otf */; };
 		9733F2E91A59DF680017EB22 /* Gotham-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9733F2E51A59DF680017EB22 /* Gotham-Light.otf */; };
 		9733F2EA1A59DF680017EB22 /* Gotham-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9733F2E61A59DF680017EB22 /* Gotham-Medium.otf */; };
@@ -22,6 +23,7 @@
 		975386AB1A4F7A160024FC33 /* LocationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 975386AA1A4F7A160024FC33 /* LocationHandler.m */; };
 		975386B01A4F91FB0024FC33 /* CouponTemplate1.xib in Resources */ = {isa = PBXBuildFile; fileRef = 975386AF1A4F91FB0024FC33 /* CouponTemplate1.xib */; };
 		9756D5581A5AF1C00070FAD7 /* CouponTemplate2.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9756D5571A5AF1C00070FAD7 /* CouponTemplate2.xib */; };
+		9765D0E61A7AB81300A930C3 /* CalculationsMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765D0E51A7AB81300A930C3 /* CalculationsMaker.m */; };
 		9784A6C11A5B1D3600AD112B /* pizza_background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6C01A5B1D3600AD112B /* pizza_background.jpg */; };
 		9784A6C31A5B1F8800AD112B /* bugs in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6C21A5B1F8800AD112B /* bugs */; };
 		9784A6CC1A5B22C100AD112B /* steps in Resources */ = {isa = PBXBuildFile; fileRef = 9784A6CB1A5B22C100AD112B /* steps */; };
@@ -33,7 +35,6 @@
 		97872FBE1A23E07700867DBB /* Coupon.m in Sources */ = {isa = PBXBuildFile; fileRef = 97872FBD1A23E07700867DBB /* Coupon.m */; };
 		97872FC11A23E0CE00867DBB /* CouponStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 97872FC01A23E0CE00867DBB /* CouponStore.m */; };
 		9789D4601A72BAF400E79409 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9789D45F1A72BAF400E79409 /* FacebookSDK.framework */; };
-		9789D4621A7581AB00E79409 /* coupon_cut_out.png in Resources */ = {isa = PBXBuildFile; fileRef = 9789D4611A7581AB00E79409 /* coupon_cut_out.png */; };
 		9789D4661A75864800E79409 /* CustomFBLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9789D4641A75864800E79409 /* CustomFBLoginViewController.m */; };
 		9789D4671A75864800E79409 /* CustomFBLoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9789D4651A75864800E79409 /* CustomFBLoginViewController.xib */; };
 		97AE743A1A1BCF9D00FE6FAB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97AE74391A1BCF9D00FE6FAB /* main.m */; };
@@ -58,6 +59,8 @@
 		3206A0F2B99D1663F4B340BC /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		4AF2E443D0A85ED2214E8995 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		801C70F391BB655544C81BA4 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		9727221A1A780B6500C94F3D /* RequestMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequestMaker.h; sourceTree = "<group>"; };
+		9727221B1A780B6500C94F3D /* RequestMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RequestMaker.m; sourceTree = "<group>"; };
 		9733F2E41A59DF680017EB22 /* Gotham-Book.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Book.otf"; sourceTree = "<group>"; };
 		9733F2E51A59DF680017EB22 /* Gotham-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Light.otf"; sourceTree = "<group>"; };
 		9733F2E61A59DF680017EB22 /* Gotham-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gotham-Medium.otf"; sourceTree = "<group>"; };
@@ -73,6 +76,8 @@
 		975386AA1A4F7A160024FC33 /* LocationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationHandler.m; sourceTree = "<group>"; };
 		975386AF1A4F91FB0024FC33 /* CouponTemplate1.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CouponTemplate1.xib; sourceTree = "<group>"; };
 		9756D5571A5AF1C00070FAD7 /* CouponTemplate2.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CouponTemplate2.xib; sourceTree = "<group>"; };
+		9765D0E41A7AB81300A930C3 /* CalculationsMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculationsMaker.h; sourceTree = "<group>"; };
+		9765D0E51A7AB81300A930C3 /* CalculationsMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalculationsMaker.m; sourceTree = "<group>"; };
 		9784A6C01A5B1D3600AD112B /* pizza_background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = pizza_background.jpg; sourceTree = "<group>"; };
 		9784A6C21A5B1F8800AD112B /* bugs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = bugs; path = MyCouponsTest/bugs; sourceTree = "<group>"; };
 		9784A6CB1A5B22C100AD112B /* steps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = steps; sourceTree = "<group>"; };
@@ -89,7 +94,6 @@
 		97872FBF1A23E0CE00867DBB /* CouponStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouponStore.h; sourceTree = "<group>"; };
 		97872FC01A23E0CE00867DBB /* CouponStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CouponStore.m; sourceTree = "<group>"; };
 		9789D45F1A72BAF400E79409 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
-		9789D4611A7581AB00E79409 /* coupon_cut_out.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = coupon_cut_out.png; sourceTree = "<group>"; };
 		9789D4631A75864800E79409 /* CustomFBLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomFBLoginViewController.h; sourceTree = "<group>"; };
 		9789D4641A75864800E79409 /* CustomFBLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomFBLoginViewController.m; sourceTree = "<group>"; };
 		9789D4651A75864800E79409 /* CustomFBLoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CustomFBLoginViewController.xib; sourceTree = "<group>"; };
@@ -172,7 +176,6 @@
 		9784A6C71A5B226600AD112B /* Coupon Images */ = {
 			isa = PBXGroup;
 			children = (
-				9789D4611A7581AB00E79409 /* coupon_cut_out.png */,
 				975386A11A4DC6F10024FC33 /* coupon2.jpg */,
 				975386A21A4DC6F10024FC33 /* coupon3.jpg */,
 			);
@@ -235,8 +238,12 @@
 				97AE743C1A1BCF9D00FE6FAB /* AppDelegate.m */,
 				975386A91A4F7A160024FC33 /* LocationHandler.h */,
 				975386AA1A4F7A160024FC33 /* LocationHandler.m */,
+				9765D0E41A7AB81300A930C3 /* CalculationsMaker.h */,
+				9765D0E51A7AB81300A930C3 /* CalculationsMaker.m */,
 				97AE745D1A1BD00E00FE6FAB /* MainTableViewController.h */,
 				97AE745E1A1BD00E00FE6FAB /* MainTableViewController.m */,
+				9727221A1A780B6500C94F3D /* RequestMaker.h */,
+				9727221B1A780B6500C94F3D /* RequestMaker.m */,
 				973E8A1D1A6F1623007AD2DC /* TableLoadingView.xib */,
 				9789D4631A75864800E79409 /* CustomFBLoginViewController.h */,
 				9789D4641A75864800E79409 /* CustomFBLoginViewController.m */,
@@ -390,7 +397,6 @@
 				975386A41A4DC6F10024FC33 /* coupon2.jpg in Resources */,
 				9733F2EB1A59DF680017EB22 /* Gotham-XLight.otf in Resources */,
 				975386A51A4DC6F10024FC33 /* coupon3.jpg in Resources */,
-				9789D4621A7581AB00E79409 /* coupon_cut_out.png in Resources */,
 				9733F2E81A59DF680017EB22 /* Gotham-Book.otf in Resources */,
 				9756D5581A5AF1C00070FAD7 /* CouponTemplate2.xib in Resources */,
 				9784A6C31A5B1F8800AD112B /* bugs in Resources */,
@@ -467,7 +473,9 @@
 				9784A6D51A5CBDCF00AD112B /* CouponDisplayCell.m in Sources */,
 				9784A6D91A5CC28000AD112B /* ReadMoreDisplayCell.m in Sources */,
 				9789D4661A75864800E79409 /* CustomFBLoginViewController.m in Sources */,
+				9765D0E61A7AB81300A930C3 /* CalculationsMaker.m in Sources */,
 				97AE745F1A1BD00E00FE6FAB /* MainTableViewController.m in Sources */,
+				9727221C1A780B6500C94F3D /* RequestMaker.m in Sources */,
 				97872FBE1A23E07700867DBB /* Coupon.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

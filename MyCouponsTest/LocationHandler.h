@@ -13,9 +13,17 @@
 @interface LocationHandler : NSObject <CLLocationManagerDelegate>
 
 @property (nonatomic) CLLocationManager * locationManager;
+
+@property (nonatomic) CFTimeInterval timeReceivedCurrentLocation;
+@property (nonatomic) CFTimeInterval timeReceivedPreviousLocation;
+
+@property (nonatomic) CFTimeInterval currentTimestamp;
 @property (nonatomic) CLLocation * currentUserLocation;
+@property (nonatomic) CLLocation * previousUserLocation;
+
 @property (nonatomic, weak) MainTableViewController * mainViewController;
-@property (nonatomic) NSMutableArray * pastLocations;
+@property (nonatomic, assign) BOOL isUserMoving;
+@property (nonatomic) NSMutableArray * previousLocations;
 @property (nonatomic, assign) BOOL deniedLocationAccess;
 
 

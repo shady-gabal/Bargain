@@ -12,7 +12,7 @@
 #import "CouponDisplayCell.h"
 #import "ReadMoreDisplayCell.h"
 #import <MONActivityIndicatorView.h>
-#import <FacebookSDK/FacebookSDK.h>
+#import "RequestMaker.h"
 
 /* FEATURES:
  1) Displays all coupons near you sorted by distance and popularity pulled from online database
@@ -24,6 +24,7 @@
  Problems:
  1) Only pulling coupons near someone - send in JSON request lat and long coordinates
  2) Constantly check if coordinates user is at have a merchant near them with a popular coupon
+ 3) fetching you savings animation not centered when rotated
  
  
  Steps:
@@ -44,15 +45,14 @@ static float PADDING_BETWEEN_SECTIONS = 15.f;
 static BOOL FETCH_FROM_SERVER = YES;
 
 static int NUM_COUPONS_TO_LOAD_PER_REQ = 15;
-static int NUM_COUPONS_ALREADY_LOADED = 0;
 
-
-static NSString * SERVER_DOMAIN = @"http://localhost:3000/";
 
 
 @interface MainTableViewController () <NSURLSessionDataDelegate, MONActivityIndicatorViewDelegate, FBLoginViewDelegate>
 
 @property (nonatomic) NSURLSession * fetchingCouponsSession;
+@property (nonatomic) NSURLSession * userSession;
+
 
 @end
 
@@ -72,6 +72,9 @@ typedef enum : NSUInteger {
     
     /* for location */
     LocationHandler * _locationHandler;
+    
+    /* for json requests */
+    RequestMaker * _requestMaker;
     
     /* colors */
     UIColor * _cellColor;
@@ -101,9 +104,6 @@ typedef enum : NSUInteger {
     UINib * readMoreViewNib = [UINib nibWithNibName:@"ReadMoreDisplayCell" bundle:[NSBundle mainBundle]];
     [self.tableView registerNib:readMoreViewNib forCellReuseIdentifier:@"ReadMoreDisplayCell"];
 
-    if (!_loggedIn){
-        
-    }
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -126,9 +126,12 @@ typedef enum : NSUInteger {
         }
         else{
             //rest of init code
+            
+            //location init code
             _locationHandler.mainViewController = self;
             [_locationHandler startTrackingLocation];
             _fetchingCouponsSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:nil];
+            _userSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:nil];
         }
         
         //setup table look
@@ -136,6 +139,7 @@ typedef enum : NSUInteger {
 //        backgroundView.frame = self.tableView.frame;
 //        self.tableView.backgroundView = backgroundView;
        
+        _requestMaker = [RequestMaker sharedInstance];
         _cellColor = [UIColor clearColor];
         
         _tableColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wood_background.jpg"]];
@@ -158,7 +162,7 @@ typedef enum : NSUInteger {
 }
 
 -(void) setup{
-    if (!_setup && _locationHandler.currentUserLocation){
+    if (!_setup && _locationHandler.currentUserLocation && self.currentUserDB && _currentUserFB){
         NSLog(@"setting up");
         _setup = YES;
         if (FETCH_FROM_SERVER){
@@ -189,6 +193,95 @@ typedef enum : NSUInteger {
 
 #pragma mark - Fetching coupons from server methods
 
+//-(void) getCouponsFromServer{
+//    
+//    if (!_locationHandler.currentUserLocation){
+//        NSLog(@"error - current user location not set. cannot get coupons from server");
+//        return;
+//    }
+//    
+////    NSMutableURLRequest * request = [[NSMutableURLRequest alloc]init];
+////    NSURL * requestURL = [self urlFromString:@"/api/getCoupons"];
+////    [request setURL:requestURL];
+////    [request setHTTPMethod:@"POST"];
+////    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+////    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+//
+//    CGFloat latitude = _locationHandler.currentUserLocation.coordinate.latitude;
+//    CGFloat longitude = _locationHandler.currentUserLocation.coordinate.longitude;
+////    
+////    NSLog(@"trying to make request. %f, %f", latitude, longitude);
+////    
+//    NSString * dataToSend = [NSString stringWithFormat:@"latitude=%f&longitude=%f&numResultsRequested=%d&numCouponsAlreadyLoaded=%d", latitude, longitude, NUM_COUPONS_TO_LOAD_PER_REQ, self.numCouponsAlreadyLoaded];
+//    
+////    [request setHTTPBody:[dataToSend dataUsingEncoding:NSUTF8StringEncoding]];
+//    
+//    
+//    NSLog(@"%@", [[request URL]absoluteString]);
+//    
+//    [[_fetchingCouponsSession dataTaskWithRequest:request completionHandler:^(NSData * data, NSURLResponse * response, NSError * error){
+//        if (! error){
+//            NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
+//            //if response returned with a status code of success
+//            if ([httpResponse statusCode] >= 200 && [httpResponse statusCode] < 400){
+//                //convert data received to json
+//                NSLog(@"Request successful. Data returned:");
+//                NSLog(@"%@", [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+//                NSLog(@"converting data to json dictionary");
+//                
+//                NSError * serializeError = nil;
+//                NSDictionary * couponData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&serializeError];
+//                
+//                //if data successfully converted to json
+//                if (!error){
+//                    //you now have access to coupons
+//                    NSLog(@"Successfully converted data to json dictionary.");
+//                    
+//                    if ([couponData count] == 0){
+//                        //no coupons returned
+//                        NSLog(@"no coupons returned");
+//                    }
+//                    
+//                    else{
+//                        //some coupons returned
+//        
+//                        for(id coupon in couponData){
+//    //                        NSLog(@"%@", coupon);
+//                            Coupon * newCoupon = [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:coupon[@"description"] withOnObjectText:coupon[@"created_at"]];
+//                            self.numCouponsAlreadyLoaded++;
+//                            NSLog(@"Num coupons already loaded: %d", self.numCouponsAlreadyLoaded);
+//                        }
+//                        //do stuff to turn coupon data into actual coupons in array
+//                        
+//                        //then reload the data in the main tableview
+//                        dispatch_async(dispatch_get_main_queue(), ^{
+//                            NSLog(@"reloading data");
+//    //                        [NSThread sleepForTimeInterval:10.f];
+//                            [self removeTableLoadingView];
+//                            [self.tableView reloadData];
+//                        });
+//                    }
+//                }
+//                
+//                //else there was an error converting to json
+//                else{
+//                    NSLog(@"error converting to json dict - %@", serializeError.description);
+//                }
+//            }
+//            
+//            //else response returned with an unsuccessful status code
+//            else{
+//                NSLog(@"Response returned with unsuccessful status code.");
+//            }
+//        }
+//        
+//        //else error with making request
+//        else{
+//            NSLog(@"%@", [error description]);
+//        }
+//    }] resume];
+//}
+
 -(void) getCouponsFromServer{
     
     if (!_locationHandler.currentUserLocation){
@@ -196,68 +289,41 @@ typedef enum : NSUInteger {
         return;
     }
     
-    NSMutableURLRequest * request = [[NSMutableURLRequest alloc]init];
-    NSURL * requestURL = [self urlFromString:@"coupons/getCoupons"];
-    [request setURL:requestURL];
-    [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-
     CGFloat latitude = _locationHandler.currentUserLocation.coordinate.latitude;
     CGFloat longitude = _locationHandler.currentUserLocation.coordinate.longitude;
+    //
+    //    NSLog(@"trying to make request. %f, %f", latitude, longitude);
+    //
+    NSString * dataToSend = [NSString stringWithFormat:@"latitude=%f&longitude=%f&numResultsRequested=%d&numCouponsAlreadyLoaded=%d", latitude, longitude, NUM_COUPONS_TO_LOAD_PER_REQ, self.numCouponsAlreadyLoaded];
     
-    NSLog(@"trying to make request. %f, %f", latitude, longitude);
-    
-    NSString * dataToSend = [NSString stringWithFormat:@"latitude=%f&longitude=%f&numResultsRequested=%d&startfrom=%d", latitude, longitude, NUM_COUPONS_TO_LOAD_PER_REQ, NUM_COUPONS_ALREADY_LOADED];
-    
-    [request setHTTPBody:[dataToSend dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    
-    NSLog(@"%@", [[request URL]absoluteString]);
-    
-    [[_fetchingCouponsSession dataTaskWithRequest:request completionHandler:^(NSData * data, NSURLResponse * response, NSError * error){
+    [_requestMaker makeRequestTo:@"/api/getCoupons" withSession:_fetchingCouponsSession withData:dataToSend withCompletionHandler:^(NSDictionary * couponData, NSURLResponse * response, NSError * error){
         if (! error){
-            NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
-            //if response returned with a status code of success
-            if ([httpResponse statusCode] >= 200 && [httpResponse statusCode] < 400){
-                //convert data received to json
-                NSLog(@"Request successful. Data returned:");
-                NSLog(@"%@", [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
-                NSLog(@"converting data to json dictionary");
-                
-                NSError * serializeError = nil;
-                NSDictionary * couponData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&serializeError];
-                
-                //if data successfully converted to json
-                if (!error){
-                    //you now have access to coupons
-                    NSLog(@"Successfully converted data to json dictionary.");
-                    
-                    for(id coupon in couponData){
-                        NSLog(@"%@", coupon);
-                        Coupon * newCoupon = [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:coupon[@"description"] withOnObjectText:coupon[@"created_at"]];
-                        NUM_COUPONS_ALREADY_LOADED++;
-                    }
-                    //do stuff to turn coupon data into actual coupons in array
-                    
-                    //then reload the data in the main tableview
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        NSLog(@"reloading data");
-//                        [NSThread sleepForTimeInterval:10.f];
-                        [self removeTableLoadingView];
-                        [self.tableView reloadData];
-                    });
-                }
-                
-                //else there was an error converting to json
-                else{
-                    NSLog(@"error converting to json dict - %@", serializeError.description);
-                }
+            
+            if (!couponData){
+                NSLog(@"no data received - error");
             }
             
-            //else response returned with an unsuccessful status code
+            else if ([couponData count] == 0){
+                //no coupons returned
+                NSLog(@"no coupons returned");
+            }
+            
             else{
-                NSLog(@"Response returned with unsuccessful status code.");
+                //some coupons returned
+                for(id coupon in couponData){
+                    //do stuff to turn coupon data into actual coupons in array
+                    // NSLog(@"%@", coupon);
+                    Coupon * newCoupon = [_couponStore createCouponFromTemplate:@"CouponTemplate2" withImageName:@"pizza_background.jpg" withDiscountText:coupon[@"description"] withOnObjectText:coupon[@"created_at"]];
+                    self.numCouponsAlreadyLoaded++;
+                    NSLog(@"Num coupons already loaded: %d", self.numCouponsAlreadyLoaded);
+                }
+                //then reload the data in the main tableview
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSLog(@"reloading data");
+                    //                        [NSThread sleepForTimeInterval:10.f];
+                    [self removeTableLoadingView];
+                    [self.tableView reloadData];
+                });
             }
         }
         
@@ -265,8 +331,9 @@ typedef enum : NSUInteger {
         else{
             NSLog(@"%@", [error description]);
         }
-    }] resume];
+    }];
 }
+
 
 -(void) removeTableLoadingView{
     NSLog(@"removetableloadingview called");
@@ -332,16 +399,7 @@ typedef enum : NSUInteger {
     
 }
 
--(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler{
-    NSURLCredential * credentials = [NSURLCredential credentialWithUser:@"shady" password:@"123" persistence:NSURLCredentialPersistenceForSession];
-    completionHandler(NSURLSessionAuthChallengeUseCredential, credentials);
-}
 
--(NSURL *) urlFromString:(NSString *) url{
-    NSString * requestURL = [SERVER_DOMAIN stringByAppendingString:url];
-    NSURL * ans = [NSURL URLWithString:requestURL];
-    return ans;
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -468,7 +526,7 @@ typedef enum : NSUInteger {
 }
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section == [[_couponStore allCoupons]count] - 1 + PADDING_CELL_INCLUSION && NUM_COUPONS_ALREADY_LOADED != 0){
+    if (indexPath.section == [[_couponStore allCoupons]count] - 1 + PADDING_CELL_INCLUSION && self.numCouponsAlreadyLoaded != 0){
         NSLog(@"should reload now");
         [self getCouponsFromServer];
     }
@@ -479,13 +537,21 @@ typedef enum : NSUInteger {
 
     if (indexPath.section == 0 && indexPath.row == 0){
         UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"PaddingCell" forIndexPath:indexPath];
-        cell.backgroundColor = [UIColor clearColor];
+//        cell.backgroundColor = [UIColor clearColor];
+        
+        NSString * isMoving = @"No";
+        if(_locationHandler.isUserMoving)
+            isMoving = @"Yes";
+        cell.textLabel.text = isMoving;
+        \
         return cell;
     }
     
-    else if (_isReadMoreSelected && indexPath.section == _readMoreSectionNum){
+    else if (_isReadMoreSelected && indexPath.section == _readMoreSectionNum && indexPath.row == 1){
         ReadMoreDisplayCell * cell = [tableView dequeueReusableCellWithIdentifier:@"ReadMoreDisplayCell" forIndexPath:indexPath];
         Coupon * coupon = [_couponStore allCoupons][indexPath.section - PADDING_CELL_INCLUSION];
+        cell.coupon = coupon;
+        cell.mainTableController = self;
         
         [self roundCellCorners:cell];
         return cell;
@@ -596,6 +662,49 @@ typedef enum : NSUInteger {
     [[UIApplication sharedApplication] openURL: [NSURL URLWithString: UIApplicationOpenSettingsURLString]];
 }
 
+#pragma mark - Facebook methods
+
+-(void) setCurrentUserFB:(NSDictionary<FBGraphUser> *)currentUserFB{
+    _currentUserFB = currentUserFB;
+    NSLog(@"setcurrentuser called");
+    [self getUser];
+
+    //call fetch coupons from server here
+    //get user from db with corr facebook id
+    //if doesnt exist create one
+    //return back if new user
+    
+}
+
+
+-(void) getUser{
+    NSString * dataToSend = [NSString stringWithFormat:@"fbId=%@", self.currentUserFB.objectID];
+    
+    [_requestMaker makeRequestTo:@"/api/getUser" withSession:_userSession withData:dataToSend withCompletionHandler:^(NSDictionary * userData, NSHTTPURLResponse * response, NSError * error){
+        if (error){
+            NSLog(@"error");
+        }
+        else{
+            if (userData){
+                NSLog(@"received user data");
+                NSLog(@"%@", userData);
+                self.currentUserDB = userData;
+                [self setup];
+            }
+            else{
+                NSLog(@"response returned with invalid status code");
+            }
+        }
+        
+    }];
+}
+
+#pragma mark - Redeem
+
+-(BOOL) redeemCoupon:(Coupon *) coupon{
+    NSLog(@"redeeming coupon");
+    return NO;
+}
 
 
 /*

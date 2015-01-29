@@ -22,10 +22,16 @@
 @property (nonatomic) NSString * finePrintString;
 @property (nonatomic) NSString * imageString;
 
+@property (nonatomic) NSString * couponId;
+@property (nonatomic) NSString * couponObjId;
+
+@property (nonatomic, assign) int indexInCouponStore;
+
 @property (nonatomic, assign) BOOL selectedForReadMore;
 
 
 -(instancetype) init;
 -(instancetype) initWithImageNamed:(NSString *) imageName;
 -(instancetype) initWithTemplate:(NSString *) template withImageName:(NSString *) imageName withDiscountText:(NSString *) discountText withOnObjectText:(NSString *) onObjectText;
+-(void) redeem;
 @end

@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "Coupon.h"
+#import "MainTableViewController.h"
 
 @interface ReadMoreDisplayCell : UITableViewCell
 
-@property (nonatomic) Coupon * coupon;
+@property (nonatomic, weak) Coupon * coupon;
+@property (nonatomic, weak) MainTableViewController * mainTableController;
 
 @end

@@ -7,9 +7,18 @@
 //
 
 #import "LocationHandler.h"
+#import "RequestMaker.h"
+#import "CalculationsMaker.h"
+
+@interface LocationHandler ()
 
 
-@implementation LocationHandler
+@end
+
+
+@implementation LocationHandler{
+    RequestMaker * _requestMaker;
+}
 
 static CGFloat DISTANCE_FILTER = 100.f;
 
@@ -41,6 +50,10 @@ static LocationHandler * locationHandler = nil;
             _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
             _locationManager.distanceFilter = DISTANCE_FILTER;
             self.currentUserLocation = nil;
+            
+            _requestMaker = [RequestMaker sharedInstance];
+            _previousLocations = [NSMutableArray array];
+
         }
         else self = nil;
     }
@@ -52,18 +65,35 @@ static LocationHandler * locationHandler = nil;
 }
 
 -(void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
+    NSLog(@"num locations: %d", [locations count]);
 //    NSLog(@"%@", locations);
-    CLLocation * previousUserLocation = self.currentUserLocation;
-//    NSLog(@"%@", previousUserLocation);
+    [_previousLocations addObject:[locations lastObject]];
+    self.previousUserLocation = self.currentUserLocation;
     self.currentUserLocation = [locations lastObject];
 
-    if (!previousUserLocation){
+    if (!self.previousUserLocation){
+        self.timeReceivedCurrentLocation = self.currentTimestamp;
         [self.mainViewController setup];
     }
-    else NSLog(@"%@", previousUserLocation);
+    else{
+        self.timeReceivedPreviousLocation = self.timeReceivedCurrentLocation;
+        self.timeReceivedCurrentLocation = self.currentTimestamp;
+        [self isUserMoving];
+        NSLog(@"%@", self.previousUserLocation);
+    }
     
 }
 
+-(BOOL) isUserMoving{
+    float dist = [CalculationsMaker calcDistanceFrom:self.previousUserLocation to:self.currentUserLocation];
+    NSLog(@"time received current location: %f, previous: %f", self.timeReceivedCurrentLocation, self.timeReceivedPreviousLocation);
+    
+    NSLog(@"distance from last position: %f", dist);
+    float timeDiffInSec = self.timeReceivedCurrentLocation - self.timeReceivedPreviousLocation;
+    
+    float speed = dist/timeDiffInSec; 
+    return NO;
+}
 
 
 -(BOOL) deniedLocationAccess{
@@ -88,6 +118,18 @@ static LocationHandler * locationHandler = nil;
     if (self.deniedLocationAccess == YES){
         [self.mainViewController userDeniedLocation];
     }
+}
+
+
+
+
+
+-(CFTimeInterval) currentTimestamp{
+    return CACurrentMediaTime();
+}
+
++(CFTimeInterval) currentTimestamp{
+    return CACurrentMediaTime();
 }
 
 //-(void) locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status{

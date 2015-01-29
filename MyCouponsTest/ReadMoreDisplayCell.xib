@@ -18,6 +18,9 @@
                         <state key="normal" title="Redeem">
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
+                        <connections>
+                            <action selector="redeemCoupon:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="0Zw-PF-5ZG"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>
